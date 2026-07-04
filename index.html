@@ -1,2 +1,61 @@
-hello, world
-안녕하세요.
+organisms = {
+    "개미": 0.005,      # m
+    "쥐": 0.2,
+    "고양이": 0.5,
+    "사람": 1.7,
+    "기린": 5.5,
+    "대왕고래": 30
+}
+
+print("=== 생물 크기 비교 프로그램 ===")
+
+print("\n등록된 생물")
+for name, size in organisms.items():
+    print(f"- {name}: {size}m")
+
+# 비교할 생물 선택
+first = input("\n첫 번째 생물 이름: ")
+second = input("두 번째 생물 이름: ")
+
+if first in organisms and second in organisms:
+    size1 = organisms[first]
+    size2 = organisms[second]
+
+    print(f"\n{first}: {size1}m")
+    print(f"{second}: {size2}m")
+
+    if size1 > size2:
+        print(f"\n{first}가 {second}보다 큽니다.")
+        print(f"약 {size1 / size2:.1f}배 큽니다.")
+    elif size2 > size1:
+        print(f"\n{second}가 {first}보다 큽니다.")
+        print(f"약 {size2 / size1:.1f}배 큽니다.")
+    else:
+        print("\n두 생물의 크기가 같습니다.")
+else:
+    print("등록되지 않은 생물입니다.")
+
+# 가장 큰 생물 찾기
+largest = max(organisms, key=organisms.get)
+print(f"\n가장 큰 생물은 '{largest}'이며 길이는 {organisms[largest]}m입니다.")
+실행 예시
+=== 생물 크기 비교 프로그램 ===
+
+등록된 생물
+- 개미: 0.005m
+- 쥐: 0.2m
+- 고양이: 0.5m
+- 사람: 1.7m
+- 기린: 5.5m
+- 대왕고래: 30m
+
+첫 번째 생물 이름: 사람
+두 번째 생물 이름: 기린
+
+사람: 1.7m
+기린: 5.5m
+
+기린이 사람보다 큽니다.
+약 3.2배 큽니다.
+
+가장 큰 생물은 '대왕고래'이며 길이는 30m입니다.

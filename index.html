@@ -1,61 +1,143 @@
-organisms = {
-    "개미": 0.005,      # m
-    "쥐": 0.2,
-    "고양이": 0.5,
-    "사람": 1.7,
-    "기린": 5.5,
-    "대왕고래": 30
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>생물 크기 비교</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg,#4facfe,#00f2fe);
+    margin:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
 }
 
-print("=== 생물 크기 비교 프로그램 ===")
+.container{
+    background:white;
+    padding:30px;
+    border-radius:15px;
+    width:420px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
 
-print("\n등록된 생물")
-for name, size in organisms.items():
-    print(f"- {name}: {size}m")
+h1{
+    text-align:center;
+    color:#2196F3;
+}
 
-# 비교할 생물 선택
-first = input("\n첫 번째 생물 이름: ")
-second = input("두 번째 생물 이름: ")
+select,button{
+    width:100%;
+    padding:12px;
+    margin:10px 0;
+    font-size:16px;
+}
 
-if first in organisms and second in organisms:
-    size1 = organisms[first]
-    size2 = organisms[second]
+button{
+    background:#2196F3;
+    color:white;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+}
 
-    print(f"\n{first}: {size1}m")
-    print(f"{second}: {size2}m")
+button:hover{
+    background:#1976D2;
+}
 
-    if size1 > size2:
-        print(f"\n{first}가 {second}보다 큽니다.")
-        print(f"약 {size1 / size2:.1f}배 큽니다.")
-    elif size2 > size1:
-        print(f"\n{second}가 {first}보다 큽니다.")
-        print(f"약 {size2 / size1:.1f}배 큽니다.")
-    else:
-        print("\n두 생물의 크기가 같습니다.")
-else:
-    print("등록되지 않은 생물입니다.")
+.result{
+    margin-top:20px;
+    padding:15px;
+    background:#f3f3f3;
+    border-radius:10px;
+    font-size:17px;
+}
+</style>
+</head>
 
-# 가장 큰 생물 찾기
-largest = max(organisms, key=organisms.get)
-print(f"\n가장 큰 생물은 '{largest}'이며 길이는 {organisms[largest]}m입니다.")
-실행 예시
-=== 생물 크기 비교 프로그램 ===
+<body>
 
-등록된 생물
-- 개미: 0.005m
-- 쥐: 0.2m
-- 고양이: 0.5m
-- 사람: 1.7m
-- 기린: 5.5m
-- 대왕고래: 30m
+<div class="container">
 
-첫 번째 생물 이름: 사람
-두 번째 생물 이름: 기린
+<h1>🦒 생물 크기 비교</h1>
 
-사람: 1.7m
-기린: 5.5m
+<select id="bio1"></select>
 
-기린이 사람보다 큽니다.
-약 3.2배 큽니다.
+<select id="bio2"></select>
 
-가장 큰 생물은 '대왕고래'이며 길이는 30m입니다.
+<button onclick="compare()">비교하기</button>
+
+<div class="result" id="result">
+생물을 선택하세요.
+</div>
+
+</div>
+
+<script>
+
+const organisms = {
+    "개미":0.005,
+    "벌":0.015,
+    "쥐":0.2,
+    "토끼":0.4,
+    "고양이":0.5,
+    "개":0.8,
+    "사람":1.7,
+    "타조":2.7,
+    "기린":5.5,
+    "코끼리":7,
+    "대왕오징어":13,
+    "대왕고래":30
+};
+
+const select1=document.getElementById("bio1");
+const select2=document.getElementById("bio2");
+
+for(let name in organisms){
+    select1.innerHTML += `<option>${name}</option>`;
+    select2.innerHTML += `<option>${name}</option>`;
+}
+
+select2.selectedIndex=1;
+
+function compare(){
+
+    const a=select1.value;
+    const b=select2.value;
+
+    const sizeA=organisms[a];
+    const sizeB=organisms[b];
+
+    let text="";
+
+    if(sizeA>sizeB){
+
+        text=`<b>${a}</b>가 <b>${b}</b>보다 큽니다.<br><br>
+        📏 ${a}: ${sizeA} m<br>
+        📏 ${b}: ${sizeB} m<br><br>
+        약 <b>${(sizeA/sizeB).toFixed(1)}배</b> 큽니다.`;
+
+    }else if(sizeB>sizeA){
+
+        text=`<b>${b}</b>가 <b>${a}</b>보다 큽니다.<br><br>
+        📏 ${a}: ${sizeA} m<br>
+        📏 ${b}: ${sizeB} m<br><br>
+        약 <b>${(sizeB/sizeA).toFixed(1)}배</b> 큽니다.`;
+
+    }else{
+
+        text=`두 생물의 크기가 같습니다.`;
+
+    }
+
+    document.getElementById("result").innerHTML=text;
+
+}
+
+</script>
+
+</body>
+</html>

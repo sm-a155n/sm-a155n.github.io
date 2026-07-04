@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>생물 크기 월드</title>
+  <title>생물 크기 월드 (부드러운 버전)</title>
 
   <style>
     body {
@@ -11,6 +11,11 @@
       background: #0b1020;
       font-family: Arial;
       color: white;
+      cursor: grab;
+    }
+
+    body:active {
+      cursor: grabbing;
     }
 
     h1 {
@@ -25,26 +30,27 @@
 
     #world {
       position: absolute;
-      left: 0;
       top: 0;
+      left: 0;
       height: 100vh;
       display: flex;
       align-items: flex-end;
-      gap: 200px;
+      gap: 180px;
       padding-left: 200px;
-      transition: transform 0.05s linear;
+      will-change: transform;
     }
 
     .creature {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-end;
+      text-align: center;
     }
 
-    .img {
+    .creature img {
       object-fit: contain;
       filter: drop-shadow(0 10px 20px rgba(0,0,0,0.6));
+      transition: transform 0.2s;
     }
 
     .name {
@@ -61,7 +67,7 @@
 
 <body>
 
-<h1>📏 생물 크기 비교 (스크롤 / 드래그)</h1>
+<h1>📏 생물 크기 비교 (부드러운 월드)</h1>
 
 <div id="world"></div>
 
@@ -83,12 +89,12 @@ const data = [
   { name:"고래", size:25000, img:"https://upload.wikimedia.org/wikipedia/commons/3/3b/Blue_Whale_001_body_whale.jpg" }
 ];
 
-// 📏 스케일 (핵심)
-function scale(size) {
-  return Math.sqrt(size) * 15;
-}
-
 const world = document.getElementById("world");
+
+// 📏 더 자연스러운 스케일 (log 느낌)
+function scale(size) {
+  return Math.pow(size, 0.45) * 18;
+}
 
 // 🌍 생성
 data.forEach(d => {
@@ -99,7 +105,6 @@ data.forEach(d => {
   const s = scale(d.size);
 
   img.src = d.img;
-  img.className = "img";
   img.style.width = s + "px";
   img.style.height = s + "px";
 
@@ -118,14 +123,16 @@ data.forEach(d => {
   world.appendChild(el);
 });
 
-// 🖱️ 드래그 이동 (Neal.fun 핵심 느낌)
+// 🧠 부드러운 카메라 시스템
+let targetX = 0;
+let currentX = 0;
 let isDown = false;
-let startX;
-let offset = 0;
+let startX = 0;
 
+// 🖱️ 드래그
 document.addEventListener("mousedown", e => {
   isDown = true;
-  startX = e.clientX - offset;
+  startX = e.clientX - targetX;
 });
 
 document.addEventListener("mouseup", () => {
@@ -134,9 +141,18 @@ document.addEventListener("mouseup", () => {
 
 document.addEventListener("mousemove", e => {
   if (!isDown) return;
-  offset = e.clientX - startX;
-  world.style.transform = `translateX(${offset}px)`;
+  targetX = e.clientX - startX;
 });
+
+// 🎯 관성 애니메이션 (핵심)
+function animate() {
+  currentX += (targetX - currentX) * 0.08; // 부드러운 따라가기
+  world.style.transform = `translateX(${currentX}px)`;
+
+  requestAnimationFrame(animate);
+}
+
+animate();
 </script>
 
 </body>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>생물 크기 비교 (Size of Life 스타일)</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: #0f172a;
+      color: white;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .hint {
+      text-align: center;
+      opacity: 0.7;
+      margin-bottom: 10px;
+    }
+
+    /* 스크롤 영역 */
+    .world {
+      display: flex;
+      align-items: center;
+      gap: 60px;
+      padding: 60px;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    /* 생물 박스 */
+    .creature {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s;
+    }
+
+    .box {
+      background: #22c55e;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: black;
+      font-weight: bold;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    }
+
+    .name {
+      margin-top: 10px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>📏 생물 크기 비교</h1>
+<div class="hint">스크롤해서 크기 차이를 확인하세요</div>
+
+<div class="world" id="world"></div>
+
+<script>
+// 🧬 데이터 (cm)
+const data = [
+  { name: "개미", size: 0.5 },
+  { name: "벌", size: 1 },
+  { name: "모기", size: 0.4 },
+  { name: "나비", size: 5 },
+  { name: "개구리", size: 8 },
+  { name: "도마뱀", size: 25 },
+  { name: "고양이", size: 50 },
+  { name: "강아지", size: 60 },
+  { name: "여우", size: 70 },
+  { name: "늑대", size: 90 },
+  { name: "호랑이", size: 300 },
+  { name: "사자", size: 250 },
+  { name: "사람", size: 170 },
+  { name: "기린", size: 500 },
+  { name: "코끼리", size: 3000 },
+  { name: "상어", size: 600 },
+  { name: "고래", size: 25000 }
+];
+
+// 🔥 스케일 (핵심)
+const scale = 0.05; // 줄이면서 화면에 맞춤
+
+const world = document.getElementById("world");
+
+data.forEach(item => {
+  const el = document.createElement("div");
+  el.className = "creature";
+
+  const box = document.createElement("div");
+  box.className = "box";
+
+  // 크기 비례 (핵심 포인트)
+  const size = Math.sqrt(item.size) * 20; // 루트 스케일로 밸런스
+
+  box.style.width = size + "px";
+  box.style.height = size + "px";
+
+  box.innerText = item.size + " cm";
+
+  const name = document.createElement("div");
+  name.className = "name";
+  name.innerText = item.name;
+
+  el.appendChild(box);
+  el.appendChild(name);
+  world.appendChild(el);
+});
+</script>
+
+</body>
+</html>

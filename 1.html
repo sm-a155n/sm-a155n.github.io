@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>생물 크기 비교 (Size of Life 스타일)</title>
+  <title>생물 크기 비교 (이미지 버전)</title>
 
   <style>
     body {
@@ -10,7 +10,7 @@
       font-family: Arial;
       background: #0f172a;
       color: white;
-      overflow-x: hidden;
+      overflow-x: auto;
     }
 
     h1 {
@@ -21,78 +21,120 @@
     .hint {
       text-align: center;
       opacity: 0.7;
-      margin-bottom: 10px;
+      margin-bottom: 20px;
     }
 
-    /* 스크롤 영역 */
     .world {
       display: flex;
-      align-items: center;
-      gap: 60px;
+      align-items: flex-end;
+      gap: 80px;
       padding: 60px;
-      overflow-x: auto;
-      white-space: nowrap;
+      min-width: max-content;
     }
 
-    /* 생물 박스 */
     .creature {
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      transition: transform 0.3s;
+      text-align: center;
     }
 
-    .box {
-      background: #22c55e;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      color: black;
-      font-weight: bold;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    /* 🔥 이미지가 핵심 */
+    .creature img {
+      object-fit: contain;
+      filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
+      transition: transform 0.3s;
     }
 
     .name {
       margin-top: 10px;
       font-size: 14px;
     }
+
+    .size {
+      font-size: 12px;
+      opacity: 0.7;
+    }
   </style>
 </head>
 
 <body>
 
-<h1>📏 생물 크기 비교</h1>
-<div class="hint">스크롤해서 크기 차이를 확인하세요</div>
+<h1>📏 생물 크기 비교 (이미지)</h1>
+<div class="hint">스크롤해서 크기를 비교하세요</div>
 
 <div class="world" id="world"></div>
 
 <script>
-// 🧬 데이터 (cm)
+
+// 🧬 생물 + 이미지 + 크기 (cm)
 const data = [
-  { name: "개미", size: 0.5 },
-  { name: "벌", size: 1 },
-  { name: "모기", size: 0.4 },
-  { name: "나비", size: 5 },
-  { name: "개구리", size: 8 },
-  { name: "도마뱀", size: 25 },
-  { name: "고양이", size: 50 },
-  { name: "강아지", size: 60 },
-  { name: "여우", size: 70 },
-  { name: "늑대", size: 90 },
-  { name: "호랑이", size: 300 },
-  { name: "사자", size: 250 },
-  { name: "사람", size: 170 },
-  { name: "기린", size: 500 },
-  { name: "코끼리", size: 3000 },
-  { name: "상어", size: 600 },
-  { name: "고래", size: 25000 }
+  {
+    name: "개미",
+    size: 0.5,
+    img: "https://upload.wikimedia.org/wikipedia/commons/2/29/Ant_working.jpg"
+  },
+  {
+    name: "벌",
+    size: 1,
+    img: "https://upload.wikimedia.org/wikipedia/commons/7/7e/Bee_apis.jpg"
+  },
+  {
+    name: "개구리",
+    size: 8,
+    img: "https://upload.wikimedia.org/wikipedia/commons/5/5a/Frog_on_lily_pad.jpg"
+  },
+  {
+    name: "고양이",
+    size: 50,
+    img: "https://upload.wikimedia.org/wikipedia/commons/3/3a/Cat03.jpg"
+  },
+  {
+    name: "강아지",
+    size: 60,
+    img: "https://upload.wikimedia.org/wikipedia/commons/6/6e/Golde33443.jpg"
+  },
+  {
+    name: "독수리",
+    size: 70,
+    img: "https://upload.wikimedia.org/wikipedia/commons/1/1a/Bald_Eagle_Portrait.jpg"
+  },
+  {
+    name: "사람",
+    size: 170,
+    img: "https://upload.wikimedia.org/wikipedia/commons/3/3f/Fronalpstock_big.jpg"
+  },
+  {
+    name: "호랑이",
+    size: 300,
+    img: "https://upload.wikimedia.org/wikipedia/commons/5/56/Tiger.50.jpg"
+  },
+  {
+    name: "코끼리",
+    size: 3000,
+    img: "https://upload.wikimedia.org/wikipedia/commons/3/37/African_Bush_Elephant.jpg"
+  },
+  {
+    name: "기린",
+    size: 5000,
+    img: "https://upload.wikimedia.org/wikipedia/commons/9/9f/Giraffe_standing.jpg"
+  },
+  {
+    name: "상어",
+    size: 600,
+    img: "https://upload.wikimedia.org/wikipedia/commons/5/56/White_shark.jpg"
+  },
+  {
+    name: "고래",
+    size: 25000,
+    img: "https://upload.wikimedia.org/wikipedia/commons/3/3b/Blue_Whale_001_body_whale.jpg"
+  }
 ];
 
 // 🔥 스케일 (핵심)
-const scale = 0.05; // 줄이면서 화면에 맞춤
+function getSize(size) {
+  return Math.sqrt(size) * 25; // 너무 크면 줄이고 작으면 키움
+}
 
 const world = document.getElementById("world");
 
@@ -100,23 +142,25 @@ data.forEach(item => {
   const el = document.createElement("div");
   el.className = "creature";
 
-  const box = document.createElement("div");
-  box.className = "box";
+  const img = document.createElement("img");
+  const size = getSize(item.size);
 
-  // 크기 비례 (핵심 포인트)
-  const size = Math.sqrt(item.size) * 20; // 루트 스케일로 밸런스
-
-  box.style.width = size + "px";
-  box.style.height = size + "px";
-
-  box.innerText = item.size + " cm";
+  img.src = item.img;
+  img.style.width = size + "px";
+  img.style.height = size + "px";
 
   const name = document.createElement("div");
   name.className = "name";
   name.innerText = item.name;
 
-  el.appendChild(box);
+  const s = document.createElement("div");
+  s.className = "size";
+  s.innerText = item.size + " cm";
+
+  el.appendChild(img);
   el.appendChild(name);
+  el.appendChild(s);
+
   world.appendChild(el);
 });
 </script>

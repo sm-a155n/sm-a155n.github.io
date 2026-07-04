@@ -2,138 +2,114 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>생물 크기 비교</title>
-
 <style>
 body{
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg,#4facfe,#00f2fe);
-    margin:0;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
+    font-family:Arial;
+    max-width:700px;
+    margin:40px auto;
+    padding:20px;
 }
-
-.container{
-    background:white;
-    padding:30px;
-    border-radius:15px;
-    width:420px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.2);
+input{
+    width:100%;
+    padding:10px;
+    margin:10px 0;
 }
-
-h1{
-    text-align:center;
-    color:#2196F3;
-}
-
-select,button{
+button{
     width:100%;
     padding:12px;
-    margin:10px 0;
-    font-size:16px;
+    font-size:18px;
 }
-
-button{
-    background:#2196F3;
-    color:white;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
-}
-
-button:hover{
-    background:#1976D2;
-}
-
-.result{
+#result{
     margin-top:20px;
-    padding:15px;
-    background:#f3f3f3;
-    border-radius:10px;
-    font-size:17px;
+    font-size:20px;
 }
 </style>
 </head>
-
 <body>
-
-<div class="container">
 
 <h1>🦒 생물 크기 비교</h1>
 
-<select id="bio1"></select>
-
-<select id="bio2"></select>
+<input id="a" placeholder="첫 번째 생물">
+<input id="b" placeholder="두 번째 생물">
 
 <button onclick="compare()">비교하기</button>
 
-<div class="result" id="result">
-생물을 선택하세요.
-</div>
-
-</div>
+<div id="result"></div>
 
 <script>
 
-const organisms = {
-    "개미":0.005,
-    "벌":0.015,
-    "쥐":0.2,
-    "토끼":0.4,
-    "고양이":0.5,
-    "개":0.8,
-    "사람":1.7,
-    "타조":2.7,
-    "기린":5.5,
-    "코끼리":7,
-    "대왕오징어":13,
-    "대왕고래":30
-};
+async function getLength(name){
 
-const select1=document.getElementById("bio1");
-const select2=document.getElementById("bio2");
+const query=`
+SELECT ?length WHERE{
+?item rdfs:label "${name}"@ko.
+?item wdt:P2043 ?length.
+}
+LIMIT 1
+`;
 
-for(let name in organisms){
-    select1.innerHTML += `<option>${name}</option>`;
-    select2.innerHTML += `<option>${name}</option>`;
+const url="https://query.wikidata.org/sparql?format=json&query="+encodeURIComponent(query);
+
+const res=await fetch(url,{
+headers:{
+'Accept':'application/sparql-results+json'
+}
+});
+
+const data=await res.json();
+
+if(data.results.bindings.length==0){
+return null;
 }
 
-select2.selectedIndex=1;
+return parseFloat(data.results.bindings[0].length.value);
 
-function compare(){
+}
 
-    const a=select1.value;
-    const b=select2.value;
+async function compare(){
 
-    const sizeA=organisms[a];
-    const sizeB=organisms[b];
+const x=document.getElementById("a").value;
+const y=document.getElementById("b").value;
 
-    let text="";
+document.getElementById("result").innerHTML="검색 중...";
 
-    if(sizeA>sizeB){
+const ax=await getLength(x);
+const ay=await getLength(y);
 
-        text=`<b>${a}</b>가 <b>${b}</b>보다 큽니다.<br><br>
-        📏 ${a}: ${sizeA} m<br>
-        📏 ${b}: ${sizeB} m<br><br>
-        약 <b>${(sizeA/sizeB).toFixed(1)}배</b> 큽니다.`;
+if(ax==null||ay==null){
+document.getElementById("result").innerHTML=
+"한 생물 이상의 크기 데이터를 찾지 못했습니다.";
+return;
+}
 
-    }else if(sizeB>sizeA){
+let html="";
 
-        text=`<b>${b}</b>가 <b>${a}</b>보다 큽니다.<br><br>
-        📏 ${a}: ${sizeA} m<br>
-        📏 ${b}: ${sizeB} m<br><br>
-        약 <b>${(sizeB/sizeA).toFixed(1)}배</b> 큽니다.`;
+if(ax>ay){
 
-    }else{
+html=`
+<h2>${x}가 더 큽니다.</h2>
+${x}: ${ax} m<br>
+${y}: ${ay} m<br><br>
+약 ${(ax/ay).toFixed(2)}배 큽니다.
+`;
 
-        text=`두 생물의 크기가 같습니다.`;
+}else if(ay>ax){
 
-    }
+html=`
+<h2>${y}가 더 큽니다.</h2>
+${x}: ${ax} m<br>
+${y}: ${ay} m<br><br>
+약 ${(ay/ax).toFixed(2)}배 큽니다.
+`;
 
-    document.getElementById("result").innerHTML=text;
+}else{
+
+html="두 생물의 크기가 같습니다.";
+
+}
+
+document.getElementById("result").innerHTML=html;
 
 }
 

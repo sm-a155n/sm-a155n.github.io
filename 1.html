@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>고전 북리뷰 허브 (Classic Book Review)</title>
+    <title>고전 & 판타지 북리뷰 허브</title>
     <style>
         :root {
-            --bg-color: #f5f4f0; /* 고전 느낌의 은은한 베이지 톤 배경 */
+            --bg-color: #f5f4f0;
             --card-bg: #ffffff;
             --text-main: #1c1917;
             --text-muted: #78716c;
-            --accent: #7c2d12; /* 고전 서적 느낌의 브라운 딥 컬러 */
+            --accent: #7c2d12;
             --accent-hover: #9a3412;
             --border: #e7e5e4;
         }
@@ -52,22 +52,38 @@
             gap: 8px;
         }
 
-        nav a {
-            text-decoration: none;
-            color: var(--text-main);
-            font-weight: 600;
-            margin-left: 20px;
-            transition: color 0.2s;
+        /* 내비게이션 / 장르 탭 필터 스타일 */
+        nav {
+            display: flex;
+            gap: 10px;
         }
 
-        nav a:hover {
+        nav button {
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 20px;
+            transition: all 0.2s ease;
+        }
+
+        nav button:hover {
             color: var(--accent);
+            background-color: #f1f0ea;
+        }
+
+        nav button.active {
+            color: #fff;
+            background-color: var(--accent);
         }
 
         /* 메인 히어로 배너 */
         .hero {
             max-width: 1200px;
-            margin: 40px auto;
+            margin: 40px auto 20px auto;
             padding: 0 20px;
             text-align: center;
         }
@@ -83,17 +99,18 @@
         .hero p {
             color: var(--text-muted);
             font-size: 1.1rem;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
         }
 
         /* 책 리스트 그리드 레이아웃 */
         .book-grid {
             max-width: 1200px;
-            margin: 0 auto 60px auto;
+            margin: 30px auto 60px auto;
             padding: 0 20px;
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 30px;
+            min-height: 400px;
         }
 
         /* 책 카드 스타일 */
@@ -103,7 +120,7 @@
             overflow: hidden;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
             border: 1px solid var(--border);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
             cursor: pointer;
         }
 
@@ -142,6 +159,12 @@
             border-radius: 6px;
             margin-bottom: 12px;
             border: 1px solid #ffedd5;
+        }
+
+        .book-tag.fantasy-tag {
+            background-color: #e0f2fe;
+            color: #0369a1;
+            border: 1px solid #bae6fd;
         }
 
         .book-title {
@@ -250,32 +273,32 @@
 </head>
 <body>
 
-    <!-- 헤더 -->
+    <!-- 헤더 및 상단 탭 구현 -->
     <header>
         <div class="header-container">
-            <a href="#" class="logo">🏛️ ClassicHub</a>
-            <nav>
-                <a href="#">홈</a>
-                <a href="#">시대별 고전</a>
-                <a href="#">명문장 보관함</a>
+            <a href="#" class="logo" onclick="filterGenre('all')">🏛️ BookHub</a>
+            <nav id="genreNav">
+                <button class="active" onclick="filterGenre('all')">전체 보기</button>
+                <button onclick="filterGenre('classic')">시대별 고전</button>
+                <button onclick="filterGenre('fantasy')">SF / 판타지</button>
             </nav>
         </div>
     </header>
 
     <!-- 히어로 배너 -->
     <section class="hero">
-        <h2>시간의 강을 견뎌낸 위대한 유산</h2>
-        <p>인류의 깊은 지혜와 고뇌가 담긴 고전 명작 리뷰를 만나보세요.</p>
+        <h2 id="heroTitle">시대를 초월한 이야기의 숲</h2>
+        <p id="heroDesc">문학 고전부터 상상력의 정점인 SF/판타지까지, 엄선된 서평을 만나보세요.</p>
     </section>
 
     <!-- 책 리스트 그리드 -->
     <main class="book-grid" id="bookGrid">
-        <!-- 자바스크립트로 고전 서적 카드가 자동 생성됩니다 -->
+        <!-- 자바스크립트로 선택된 장르별 카드가 동적 생성됩니다 -->
     </main>
 
     <!-- 푸터 -->
     <footer>
-        <p>© 2026 ClassicHub. All rights reserved.</p>
+        <p>© 2026 BookHub Classic & Fantasy. All rights reserved.</p>
     </footer>
 
     <!-- 상세 리뷰 모달창 -->
@@ -289,43 +312,67 @@
     </div>
 
     <script>
-        // 새로운 고전 도서 데이터 목록 (기존 도서 완전 제외)
+        // 고전 서적 4권 + SF/판타지 2권 추가 구조 데이터 배열
         const books = [
             {
                 title: "노인과 바다",
                 author: "어니스트 헤밍웨이",
+                category: "classic",
                 tag: "세계 문학 / 미국",
                 rating: "⭐️ 4.9",
-                color: "#1e3a8a", /* 깊은 바다색 */
+                color: "#1e3a8a",
                 accentColor: "#fef08a",
-                review: "쿠바의 늙은 어부 산티아고의 거대한 청새치와의 사투, 그리고 상어 떼의 습격을 그린 헤밍웨이의 정점입니다. '인간은 파멸할지언정 패배하지 않는다'는 명제 아래, 가혹한 운명에 맞서 인간의 존엄성과 불굴의 의지를 간결하고 강렬한 문체로 보여주는 위대한 고전입니다."
+                review: "쿠바의 늙은 어부 산티아고의 거대한 청새치와의 사투를 그린 명작입니다. 가혹한 운명에 맞서 인간의 존엄성과 불굴의 의지를 간결하고 강렬한 하드보일드 문체로 보여줍니다."
             },
             {
                 title: "데미안",
                 author: "헤르만 헤세",
+                category: "classic",
                 tag: "성장 소설 / 독일",
                 rating: "⭐️ 4.8",
-                color: "#14532d", /* 고풍스러운 다크 그린 */
+                color: "#14532d",
                 accentColor: "#fde047",
-                review: "싱클레어라는 한 소년이 안락한 세계를 깨고 나와 진정한 자아를 찾아가는 치열한 내면의 여정을 다룹니다. 신비로운 인물 '데미안'을 만나며 겪는 선과 악의 고뇌는 오늘날 방황하는 청춘들에게도 '알을 깨고 나오는 아픔과 성장의 가치'를 고스란히 전해줍니다."
+                review: "싱클레어라는 한 소년이 안락한 세계를 깨고 나와 진정한 자아를 찾아가는 치열한 내면의 여정을 다룹니다. '알을 깨고 나오는 아픔과 성장의 가치'를 고스란히 전해줍니다."
             },
             {
                 title: "위대한 개츠비",
                 author: "F. 스콧 피츠제럴드",
+                category: "classic",
                 tag: "세계 문학 / 소설",
                 rating: "⭐️ 4.7",
-                color: "#451a03", /* 고급스러운 클래식 브라운 */
+                color: "#451a03",
                 accentColor: "#fcd34d",
-                review: "1920년대 미국 물질문명의 황금기 속에서 피어난 한 남자의 맹목적이고도 비극적인 사랑을 그린 소설입니다. 화려함 뒤에 숨겨진 인간의 공허함과 아메리칸드림의 환멸을 피츠제럴드 특유의 아름답고 감각적인 문체로 날카롭게 포착해 낸 수작입니다."
+                review: "1920년대 미국 물질문명의 황금기 속에서 피어난 한 남자의 비극적인 사랑을 그린 소설입니다. 화려함 뒤에 숨겨진 인간의 공허함과 아메리칸드림의 환멸을 아름다운 문체로 포착했습니다."
             },
             {
                 title: "오만과 편견",
                 author: "제인 오스틴",
+                category: "classic",
                 tag: "영국 문학 / 로맨스",
                 rating: "⭐️ 4.8",
-                color: "#4d0727", /* 세련된 딥 버건디 */
+                color: "#4d0727",
                 accentColor: "#fbcfe8",
-                review: "엘리자베스의 '편견'과 다이시의 '오만'이 부딪히며 진정한 사랑을 깨달아가는 과정을 유쾌하고도 섬세하게 다룬 작품입니다. 단순한 연애 소설을 넘어 18세기 영국 상류층 사회의 계급과 결혼 제도를 날카로운 위트와 냉철한 시선으로 풍자하여 문학적 가치가 매우 높습니다."
+                review: "엘리자베스의 '편견'과 다이시의 '오만'이 부딪히며 진정한 사랑을 깨달아가는 과정을 다룬 작품입니다. 18세기 영국 사회의 결혼 제도를 날카로운 위트와 냉철한 시선으로 풍자했습니다."
+            },
+            {
+                title: "2001 스페이스 오디세이",
+                author: "아더 C. 클라크",
+                category: "fantasy",
+                tag: "SF / 하드 SF",
+                rating: "⭐️ 4.9",
+                color: "#0f172a", /* 우주를 상징하는 아주 어두운 감청색 */
+                accentColor: "#38bdf8",
+                review: "인류의 기원과 우주 진화, 그리고 인공지능 HAL9000과의 갈등을 완벽하게 예견한 하드 SF의 기념비적인 걸작입니다. 과학적 정밀함과 함께 인류 너머 초월적 존재에 대한 철학적인 탐구를 절묘하게 결합해 독자들에게 거대한 지적 전율을 선사합니다."
+            },
+            {
+                title: "반지의 제왕",
+                author: "J.R.R. 톨킨",
+                category: "fantasy",
+                tag: "판타지 / 하이 판타지",
+                rating: "⭐️ 5.0",
+                color: "#292524", /* 절대반지의 묵직함을 지닌 다크 스톤 */
+                accentColor: "#ca8a04",
+                review: "현대 판타지 문학의 뼈대를 세운 절대적인 마스터피스입니다. 중간계라는 가상의 세계관에 숨을 불어넣기 위해 고유의 언어, 역사, 신화까지 완벽하게 창조해 낸 톨킨의 천재성이 빛납니다. 탐욕을 상징하는 절대반지를 파괴하기 위한 평범한 호빗들의 위대한 여정을 그립니다."
             }
         ];
 
@@ -334,32 +381,67 @@
         const modalBody = document.getElementById('modalBody');
         const closeBtn = document.getElementById('closeBtn');
 
-        // 메인 화면에 책 카드 렌더링
-        books.forEach((book, index) => {
-            const card = document.createElement('div');
-            card.className = 'book-card';
-            card.innerHTML = `
-                <div class="cover-wrapper">
-                    <canvas class="cover-canvas" id="canvas-${index}"></canvas>
-                </div>
-                <div class="book-info">
-                    <span class="book-tag">${book.tag}</span>
-                    <h3 class="book-title">${book.title}</h3>
-                    <div class="book-author">${book.author} 저</div>
-                    <div class="rating">${book.rating}</div>
-                </div>
-            `;
+        // 장르별 필터링 실행 함수
+        function filterGenre(genre) {
+            // 1. 버튼 활성화 클래스 변경
+            const buttons = document.querySelectorAll('#genreNav button');
+            buttons.forEach(btn => btn.classList.remove('active'));
             
-            card.addEventListener('click', () => openModal(book));
-            grid.appendChild(card);
+            // 클릭된 버튼 찾아서 활성화
+            const currentBtn = Array.from(buttons).find(btn => {
+                if (genre === 'all') return btn.innerText === '전체 보기';
+                if (genre === 'classic') return btn.innerText === '시대별 고전';
+                if (genre === 'fantasy') return btn.innerText === 'SF / 판타지';
+            });
+            if(currentBtn) currentBtn.classList.add('active');
 
-            // 고전 양장본 디자인 느낌으로 표지 그리기
-            setTimeout(() => {
-                drawBookCover(`canvas-${index}`, book);
-            }, 10);
-        });
+            // 2. 헤더 타이틀 및 설명 텍스트 동적 변경
+            const h2 = document.getElementById('heroTitle');
+            const p = document.getElementById('heroDesc');
+            if(genre === 'all') {
+                h2.innerText = "시대를 초월한 이야기의 숲";
+                p.innerText = "문학 고전부터 상상력의 정점인 SF/판타지까지, 엄선된 서평을 만나보세요.";
+            } else if(genre === 'classic') {
+                h2.innerText = "🏛️ 시대별 고전 문학";
+                p.innerText = "시간의 강을 견뎌내며 살아남은 위대한 대작들과 인류의 지혜를 관찰합니다.";
+            } else if(genre === 'fantasy') {
+                h2.innerText = "🚀 SF / 판타지 마스터피스";
+                p.innerText = "끝없는 우주적 상상력과 새로운 세계관을 창조해 낸 위대한 환상 문학의 정점.";
+            }
 
-        // 캔버스 기반 클래식 양장본 스타일 표지 렌더링 함수
+            // 3. 리스트 리셋 및 필터링 후 다시 그리기
+            grid.innerHTML = '';
+            const filteredBooks = genre === 'all' ? books : books.filter(b => b.category === genre);
+
+            filteredBooks.forEach((book, index) => {
+                const card = document.createElement('div');
+                card.className = 'book-card';
+                // 장르에 따른 태그 컬러 분기 스타일링
+                const tagClass = book.category === 'fantasy' ? 'book-tag fantasy-tag' : 'book-tag';
+                
+                card.innerHTML = `
+                    <div class="cover-wrapper">
+                        <canvas class="cover-canvas" id="canvas-${index}"></canvas>
+                    </div>
+                    <div class="book-info">
+                        <span class="${tagClass}">${book.tag}</span>
+                        <h3 class="book-title">${book.title}</h3>
+                        <div class="book-author">${book.author} 저</div>
+                        <div class="rating">${book.rating}</div>
+                    </div>
+                `;
+                
+                card.addEventListener('click', () => openModal(book));
+                grid.appendChild(card);
+
+                // 고품질 책 표지 생성
+                setTimeout(() => {
+                    drawBookCover(`canvas-${index}`, book);
+                }, 15);
+            });
+        }
+
+        // 캔버스 드로잉 엔진 (고전 양장본 및 SF 모던 북 커버 분기 처리)
         function drawBookCover(canvasId, bookData) {
             const canvas = document.getElementById(canvasId);
             if (!canvas) return;
@@ -368,11 +450,10 @@
             canvas.width = 300;
             canvas.height = 380;
 
-            // 1. 기본 표지 배경색
+            // 배경색 및 그라데이션 베이스
             ctx.fillStyle = bookData.color;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // 2. 책 등/입체 질감 음영
             let grad = ctx.createLinearGradient(0, 0, canvas.width, 0);
             grad.addColorStop(0, 'rgba(0,0,0,0.3)');
             grad.addColorStop(0.04, 'rgba(255,255,255,0.08)');
@@ -381,51 +462,71 @@
             ctx.fillStyle = grad;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // 3. 고전 양장본 문양 사각 프레임 추가
-            ctx.strokeStyle = bookData.accentColor;
-            ctx.lineWidth = 2;
-            ctx.globalAlpha = 0.4;
-            ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
-            ctx.strokeRect(25, 25, canvas.width - 50, canvas.height - 50);
+            // 장르별 디자인 포인트 분기
+            if (bookData.category === 'fantasy') {
+                // SF/판타지 디자인: 미래지향적인 원형 궤도 및 세련된 네온 라인 느낌
+                ctx.strokeStyle = bookData.accentColor;
+                ctx.lineWidth = 1;
+                ctx.globalAlpha = 0.25;
+                ctx.beginPath();
+                ctx.arc(canvas.width/2, 230, 70, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.arc(canvas.width/2, 230, 45, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                ctx.fillStyle = bookData.accentColor;
+                ctx.globalAlpha = 0.6;
+                ctx.beginPath();
+                ctx.arc(canvas.width/2, 230, 6, 0, Math.PI * 2);
+                ctx.fill();
+            } else {
+                // 고전 디자인: 고풍스러운 사각 테두리 프레임 및 다이아몬드
+                ctx.strokeStyle = bookData.accentColor;
+                ctx.lineWidth = 2;
+                ctx.globalAlpha = 0.4;
+                ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
+                
+                ctx.fillStyle = bookData.accentColor;
+                ctx.beginPath();
+                ctx.moveTo(canvas.width/2, 215);
+                ctx.lineTo(canvas.width/2 + 20, 235);
+                ctx.lineTo(canvas.width/2, 255);
+                ctx.lineTo(canvas.width/2 - 20, 235);
+                ctx.closePath();
+                ctx.fill();
+            }
 
-            // 4. 중앙 디자인 데코 (다이아몬드 포인트)
-            ctx.fillStyle = bookData.accentColor;
-            ctx.beginPath();
-            ctx.moveTo(canvas.width/2, 210);
-            ctx.lineTo(canvas.width/2 + 25, 235);
-            ctx.lineTo(canvas.width/2, 260);
-            ctx.lineTo(canvas.width/2 - 25, 235);
-            ctx.closePath();
-            ctx.fill();
-
-            // 5. 타이틀 매핑
+            // 텍스트 드로잉
             ctx.globalAlpha = 1.0;
             ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 24px "Malgun Gothic", serif';
+            ctx.font = 'bold 22px "Malgun Gothic", serif';
             ctx.textAlign = 'center';
             
             const title = bookData.title;
-            if(title.length > 6) {
-                ctx.fillText(title.substring(0, 5), canvas.width/2, 115);
-                ctx.fillText(title.substring(5), canvas.width/2, 150);
+            if(title.length > 7) {
+                ctx.fillText(title.substring(0, 6), canvas.width/2, 115);
+                ctx.fillText(title.substring(6), canvas.width/2, 150);
             } else {
                 ctx.fillText(title, canvas.width/2, 130);
             }
 
-            // 6. 작가 이름 매핑
             ctx.fillStyle = bookData.accentColor;
-            ctx.font = 'italic 13px "Malgun Gothic", sans-serif';
+            ctx.font = '13px "Malgun Gothic", sans-serif';
             ctx.fillText(bookData.author, canvas.width/2, canvas.height - 65);
         }
 
-        // 모달창 제어
+        // 서평 모달창 노출 기능
         function openModal(book) {
+            const tagClass = book.category === 'fantasy' ? 'book-tag fantasy-tag' : 'book-tag';
+            const icon = book.category === 'fantasy' ? '🚀' : '🏛️';
+            
             modalBody.innerHTML = `
-                <span class="book-tag" style="margin-bottom:8px;">${book.tag}</span>
+                <span class="${tagClass}" style="margin-bottom:8px;">${book.tag}</span>
                 <h3>${book.title}</h3>
-                <div style="color:var(--text-muted); font-size:0.95rem; margin-bottom:15px;">저자: ${book.author} | 추천 평점: ${book.rating}</div>
+                <div style="color:var(--text-muted); font-size:0.95rem; margin-bottom:15px;">저자: ${book.author} | 평점: ${book.rating}</div>
                 <div class="modal-review">
-                    <h4 style="margin: 0 0 10px 0; font-size: 1.1rem; color: var(--accent);">🏛️ 작품 해설 및 서평</h4>
+                    <h4 style="margin: 0 0 10px 0; font-size: 1.1rem; color: var(--accent);">${icon} 작품 해설 및 서평</h4>
                     ${book.review}
                 </div>
             `;
@@ -442,6 +543,9 @@
         overlay.addEventListener('click', (e) => {
             if(e.target === overlay) closeModal();
         });
+
+        // 초기 화면 구동 시 '전체 보기' 리스트 출력
+        filterGenre('all');
     </script>
 </body>
 </html>

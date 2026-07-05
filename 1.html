@@ -1,112 +1,200 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <title>미시 세계 월드</title>
+<meta charset="UTF-8">
+<title>미시 세계 월드</title>
 
-  <style>
-    /* 🔥 전체 기본 설정 */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+<style>
 
-    body {
-      overflow: hidden;
-      background: #0b1020 !important; /* 무조건 어두운 배경 */
-      color: white !important;
-      font-family: Arial, sans-serif;
-    }
+/* ===== 기본 설정 ===== */
 
-    h1 {
-      position: fixed;
-      top: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 18px;
-      opacity: 0.9;
-      z-index: 10;
-      color: white !important;
-    }
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
-    #world {
-      position: absolute;
-      left: 0;
-      top: 0;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      gap: 250px;
-      padding-left: 300px;
-      transform-origin: 0 0;
-      will-change: transform;
-    }
+body{
+    overflow:hidden;
+    background:#0b1020;
+    color:#fff;
+    font-family:Arial,sans-serif;
+}
 
-    .item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-    }
+h1{
+    position:fixed;
+    top:10px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:18px;
+    opacity:.9;
+    z-index:100;
+}
 
-    .circle {
-      border-radius: 50%;
-      background: radial-gradient(circle at 30% 30%, #22c55e, #065f46);
-      box-shadow: 0 0 25px rgba(34,197,94,0.6);
-    }
+/* ===== 월드 ===== */
 
-    .name {
-      margin-top: 10px;
-      font-size: 14px;
-      color: white !important;
-    }
+#world{
 
-    .size {
-      font-size: 11px;
-      opacity: 0.8;
-      color: white !important;
-    }
-  </style>
+    position:absolute;
+    left:0;
+    top:0;
+
+    height:100vh;
+
+    display:flex;
+    align-items:center;
+
+    gap:250px;
+
+    padding-left:300px;
+
+    transform-origin:0 0;
+    will-change:transform;
+
+}
+
+.item{
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+
+}
+
+/* 기존 동그라미 */
+
+.circle{
+
+    border-radius:50%;
+
+    background:
+    radial-gradient(
+    circle at 30% 30%,
+    #22c55e,
+    #065f46
+    );
+
+    box-shadow:
+    0 0 25px rgba(34,197,94,.6);
+
+}
+
+/* 새 이미지용 */
+
+.photo{
+
+    object-fit:contain;
+
+    filter:
+    drop-shadow(
+    0 0 18px rgba(255,255,255,.25)
+    );
+
+    user-select:none;
+    pointer-events:none;
+
+}
+
+.name{
+
+    margin-top:12px;
+    font-size:15px;
+    font-weight:bold;
+
+}
+
+.size{
+
+    font-size:11px;
+    opacity:.75;
+
+}
+
+</style>
+
 </head>
 
 <body>
 
-<h1>🦠 미시 세계 월드 (줌 + 드래그)</h1>
+<h1>
+🦠 미시 세계 월드 (줌 + 드래그)
+</h1>
 
 <div id="world"></div>
 
 <script>
+  
+/* =========================
+   📊 미시 세계 데이터
+========================= */
 
 const data = [
-  { name: "세포", size: 10 },
-  { name: "박테리아", size: 1 },
-  { name: "DNA", size: 0.1 },
-  { name: "단백질", size: 0.01 },
-  { name: "바이러스", size: 0.001 },
-  { name: "원자", size: 0.0001 },
-  { name: "전자", size: 0.00001 }
+  { name: "세포", size: 10, type: "image", src: "cell.png" },
+  { name: "박테리아", size: 1, type: "image", src: "bacteria.png" },
+  { name: "DNA", size: 0.1, type: "image", src: "dna.png" },
+  { name: "단백질", size: 0.01, type: "image", src: "protein.png" },
+  { name: "바이러스", size: 0.001, type: "image", src: "virus.png" },
+  { name: "원자", size: 0.0001, type: "image", src: "atom.png" },
+  { name: "전자", size: 0.00001, type: "image", src: "electron.png" }
 ];
+
+/* =========================
+   🌍 DOM
+========================= */
 
 const world = document.getElementById("world");
 
-/* 📏 로그 스케일 */
+/* =========================
+   📏 로그 스케일
+========================= */
+
 function scale(size) {
   return Math.log10(size + 1e-10) * -80;
 }
 
-/* 🌍 생성 */
+/* =========================
+   🧠 생성 함수
+========================= */
+
 data.forEach(d => {
+
   const el = document.createElement("div");
   el.className = "item";
 
-  const circle = document.createElement("div");
-  circle.className = "circle";
-
   const s = Math.abs(scale(d.size)) + 30;
 
-  circle.style.width = s + "px";
-  circle.style.height = s + "px";
+/* ↓↓↓ 여기서 이미지/도형 결정 (3/4에서 계속) ↓↓↓ */
+
+/* =========================
+   🎨 시각 요소 생성
+========================= */
+
+  let visual;
+
+  if (d.type === "image") {
+
+    visual = document.createElement("img");
+    visual.src = d.src;
+    visual.alt = d.name;
+    visual.className = "photo";
+
+    // 크기 설정 (로그 스케일 반영)
+    visual.style.width = (s + 60) + "px";
+    visual.style.height = "auto";
+
+  } else {
+
+    // fallback (사용 안 하지만 유지)
+    visual = document.createElement("div");
+    visual.className = "circle";
+    visual.style.width = s + "px";
+    visual.style.height = s + "px";
+  }
+
+/* =========================
+   🏷️ 텍스트
+========================= */
 
   const name = document.createElement("div");
   name.className = "name";
@@ -116,14 +204,22 @@ data.forEach(d => {
   size.className = "size";
   size.innerText = d.size + " cm";
 
-  el.appendChild(circle);
+/* =========================
+   📦 조립
+========================= */
+
+  el.appendChild(visual);
   el.appendChild(name);
   el.appendChild(size);
 
   world.appendChild(el);
+
 });
 
-/* 🧠 카메라 시스템 */
+/* =========================
+   🖱️ 드래그 상태
+========================= */
+
 let zoom = 1;
 let targetZoom = 1;
 
@@ -133,38 +229,63 @@ let tx = 0, ty = 0;
 let dragging = false;
 let startX, startY;
 
-/* 🖱️ 드래그 */
+/* =========================
+   🖱️ 드래그 시작
+========================= */
+
 document.addEventListener("mousedown", e => {
   dragging = true;
   startX = e.clientX - tx;
   startY = e.clientY - ty;
 });
 
+/* =========================
+   🖱️ 드래그 종료
+========================= */
+
 document.addEventListener("mouseup", () => {
   dragging = false;
 });
 
+/* =========================
+   🖱️ 드래그 이동
+========================= */
+
 document.addEventListener("mousemove", e => {
   if (!dragging) return;
+
   tx = e.clientX - startX;
   ty = e.clientY - startY;
 });
 
-/* 🔍 줌 */
+/* =========================
+   🔍 줌 (휠)
+========================= */
+
 document.addEventListener("wheel", e => {
+
   targetZoom += e.deltaY * -0.001;
-  targetZoom = Math.min(Math.max(0.3, targetZoom), 5);
+
+  targetZoom = Math.min(Math.max(0.3, targetZoom), 6);
+
 });
 
-/* 🎬 부드러운 애니메이션 */
+/* =========================
+   🎬 애니메이션 루프
+========================= */
+
 function animate() {
+
   zoom += (targetZoom - zoom) * 0.08;
+
   x += (tx - x) * 0.12;
   y += (ty - y) * 0.12;
 
-  world.style.transform = `translate(${x}px, ${y}px) scale(${zoom})`;
+  world.style.transform =
+    `translate(${x}px, ${y}px) scale(${zoom})`;
 
   requestAnimationFrame(animate);
+
 }
 
 animate();

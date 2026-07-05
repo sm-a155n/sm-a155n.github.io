@@ -3,242 +3,436 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>미시 세계 월드 (줌 + 드래그)</title>
+    <title>북리뷰 허브 (Book Review Hub)</title>
     <style>
+        :root {
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --text-main: #212529;
+            --text-muted: #6c757d;
+            --accent: #4f46e5;
+            --accent-hover: #4338ca;
+            --border: #e9ecef;
+        }
+
         body {
             margin: 0;
             padding: 0;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            line-height: 1.6;
+        }
+
+        /* 헤더 영역 */
+        header {
+            background-color: var(--card-bg);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--accent);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-main);
+            font-weight: 600;
+            margin-left: 20px;
+            transition: color 0.2s;
+        }
+
+        nav a:hover {
+            color: var(--accent);
+        }
+
+        /* 메인 히어로 배너 */
+        .hero {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            text-align: center;
+        }
+
+        .hero h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+        }
+
+        .hero p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        /* 책 리스트 그리드 레이아웃 */
+        .book-grid {
+            max-width: 1200px;
+            margin: 0 auto 60px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        /* 책 카드 스타일 */
+        .book-card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
             overflow: hidden;
-            background-color: #050811;
-            font-family: 'Malgun Gothic', sans-serif;
-            color: #fff;
-            user-select: none;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+            border: 1px solid var(--border);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
         }
 
-        h1 {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
-            margin: 0;
-            background: rgba(5, 8, 17, 0.85);
-            padding: 12px 24px;
-            border-radius: 30px;
-            font-size: 1.4rem;
-            pointer-events: none;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.6);
-            border: 1px solid rgba(0, 255, 204, 0.2);
-            letter-spacing: -0.5px;
+        .book-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
         }
 
-        #canvas-container {
-            width: 100vw;
-            height: 100vh;
+        /* 가상 표지 영역 (Canvas 사용) */
+        .cover-wrapper {
+            width: 100%;
+            height: 380px;
+            overflow: hidden;
+            background: #eee;
             position: relative;
-            cursor: grab;
         }
 
-        #canvas-container:active {
-            cursor: grabbing;
-        }
-
-        canvas {
+        .cover-canvas {
+            width: 100%;
+            height: 100%;
             display: block;
         }
 
-        .instructions {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
-            background: rgba(5, 8, 17, 0.85);
-            padding: 8px 18px;
-            border-radius: 20px;
+        /* 카드 텍스트 내용 */
+        .book-info {
+            padding: 24px;
+        }
+
+        .book-tag {
+            display: inline-block;
+            background-color: #f0fdf4;
+            color: #16a34a;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+        }
+
+        .book-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .book-author {
+            color: var(--text-muted);
             font-size: 0.9rem;
-            pointer-events: none;
+            margin-bottom: 12px;
+        }
+
+        .rating {
+            color: #f59e0b;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.95rem;
+        }
+
+        /* 푸터 */
+        footer {
+            background-color: var(--card-bg);
+            border-top: 1px solid var(--border);
+            padding: 40px 20px;
             text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* 모달 (상세 리뷰 팝업창) */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: #fff;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #f1f5f9;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-body h3 {
+            font-size: 1.5rem;
+            margin-top: 0;
+            margin-bottom: 5px;
+        }
+
+        .modal-review {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            color: #334155;
+            white-space: pre-wrap;
         }
     </style>
 </head>
 <body>
 
-    <h1>🦠 미시 세계 월드 (줌 + 드래그)</h1>
-    
-    <div id="canvas-container">
-        <!-- 깨질 염려가 없는 HTML5 캔버스를 사용합니다 -->
-        <canvas id="worldCanvas"></canvas>
+    <!-- 헤더 -->
+    <header>
+        <div class="header-container">
+            <a href="#" class="logo">📚 BookHub</a>
+            <nav>
+                <a href="#">홈</a>
+                <a href="#">베스트셀러</a>
+                <a href="#">나의 서재</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 히어로 배너 -->
+    <section class="hero">
+        <h2>지적 여정을 위한 한 걸음</h2>
+        <p>엄선된 도서들의 깊이 있는 리뷰를 만나보세요.</p>
+    </section>
+
+    <!-- 책 리스트 그리드 -->
+    <main class="book-grid" id="bookGrid">
+        <!-- 자바스크립트로 카드가 자동 생성됩니다 -->
+    </main>
+
+    <!-- 푸터 -->
+    <footer>
+        <p>© 2026 BookHub Review. All rights reserved.</p>
+    </footer>
+
+    <!-- 상세 리뷰 모달창 -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content">
+            <button class="close-btn" id="closeBtn">&times;</button>
+            <div class="modal-body" id="modalBody">
+                <!-- 동적 내용 삽입 -->
+            </div>
+        </div>
     </div>
 
-    <div class="instructions">🖱️ 마우스 휠: 줌 인/아웃 | 🖐️ 드래그: 화면 이동</div>
-
     <script>
-        const canvas = document.getElementById('worldCanvas');
-        const ctx = canvas.getContext('2d');
-        const container = document.getElementById('canvas-container');
-
-        // 캔버스 크기를 화면에 맞춤
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            draw();
-        }
-
-        // 변환 상태 관리 variables
-        let scale = 1;
-        let offsetX = 0;
-        let offsetY = 0;
-        let isDragging = false;
-        let startX = 0;
-        let startY = 0;
-
-        // 초기 위치를 화면 중앙으로 설정
-        offsetX = window.innerWidth / 2;
-        offsetY = window.innerHeight / 2;
-
-        // [핵심] 미시 세계 느낌의 그래픽을 실시간으로 그리는 함수
-        function draw() {
-            // 1. 화면 지우기
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            ctx.save();
-            // 2. 드래그 및 줌 매트릭스 적용
-            ctx.translate(offsetX, offsetY);
-            ctx.scale(scale, scale);
-
-            // --- 미시 세계/세포 그래픽 그리기 시작 ---
-            // 배경 격자(Grid)
-            ctx.strokeStyle = 'rgba(0, 255, 204, 0.05)';
-            ctx.lineWidth = 1;
-            const gridCount = 20;
-            const gridSize = 100;
-            for(let i = -gridCount; i <= gridCount; i++) {
-                ctx.beginPath();
-                ctx.moveTo(i * gridSize, -gridCount * gridSize);
-                ctx.lineTo(i * gridSize, gridCount * gridSize);
-                ctx.stroke();
-                
-                ctx.beginPath();
-                ctx.moveTo(-gridCount * gridSize, i * gridSize);
-                ctx.lineTo(gridCount * gridSize, i * gridSize);
-                ctx.stroke();
+        // 책 데이터 구조 (원하는 대로 리뷰나 제목 수정 가능!)
+        const books = [
+            {
+                title: "달러구트 꿈 백화점",
+                author: "이미예",
+                tag: "소설 / 판타지",
+                rating: "⭐️ 4.8",
+                color: "#1e1b4b",
+                accentColor: "#fbbf24",
+                review: "잠들어야만 입장할 수 있는 상점가에서 일어나는 비밀스럽고도 마음 따뜻한 이야기입니다. 지친 일상 속에서 영혼을 위로해 주는 판타지 소설로, 작가의 독창적인 세계관이 돋보입니다. 읽고 나면 오늘 밤 어떤 꿈을 꿀지 기대하게 만듭니다."
+            },
+            {
+                title: "사피엔스",
+                author: "유발 하라리",
+                tag: "인문 / 역사",
+                rating: "⭐️ 4.9",
+                color: "#2d1b10",
+                accentColor: "#e7e5e4",
+                review: "변방의 유인원에서 지구의 지배자가 되기까지 인류의 거대한 역사를 다룬 명작입니다. 인지혁명, 농업혁명, 과학혁명이라는 세 가지 키워드로 인류를 날카롭게 해부합니다. 우리가 당연하게 믿어왔던 사회적 시스템에 대해 근본적인 질문을 던지게 만드는 책입니다."
+            },
+            {
+                title: "미드나잇 라이브러리",
+                author: "매트 헤이그",
+                tag: "소설 / 문학",
+                rating: "⭐️ 4.6",
+                color: "#0f172a",
+                accentColor: "#38bdf8",
+                review: "후회로 가득해 삶을 포기하려던 주인공이 삶과 죽음 사이에 존재하는 '자정의 도서관'에서 자신이 다르게 살았을 수도 있는 수많은 인생을 살아보는 이야기입니다. '선택하지 않은 삶에 후회할 필요가 없다'는 묵직한 메시지를 던집니다."
+            },
+            {
+                title: "도파민네이션",
+                author: "애나 렘키",
+                tag: "과학 / 심리",
+                rating: "⭐️ 4.7",
+                color: "#4c0519",
+                accentColor: "#fda4af",
+                review: "쾌락과 고통의 메커니즘을 뇌과학과 심리학 관점에서 쉽게 풀어낸 책입니다. 스마트폰, SNS 등 중독 유발 요인 가득한 현대사회에서 어떻게 도파민의 균형을 찾고 삶의 통제권을 회복할 수 있는지 아주 실질적인 해답을 제공합니다."
             }
+        ];
 
-            // 큰 세포벽 (가운데 원)
-            ctx.strokeStyle = 'rgba(0, 255, 204, 0.4)';
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.arc(0, 0, 300, 0, Math.PI * 2);
-            ctx.stroke();
+        const grid = document.getElementById('bookGrid');
+        const overlay = document.getElementById('modalOverlay');
+        const modalBody = document.getElementById('modalBody');
+        const closeBtn = document.getElementById('closeBtn');
 
-            // 세포핵 (붉은 중심부)
-            let gradient = ctx.createRadialGradient(0, 0, 10, 0, 0, 80);
-            gradient.addColorStop(0, 'rgba(255, 0, 85, 1)');
-            gradient.addColorStop(0.8, 'rgba(255, 0, 85, 0.5)');
-            gradient.addColorStop(1, 'rgba(255, 0, 85, 0)');
-            ctx.fillStyle = gradient;
+        // 메인 화면에 책 카드 렌더링
+        books.forEach((book, index) => {
+            const card = document.createElement('div');
+            card.className = 'book-card';
+            card.innerHTML = `
+                <div class="cover-wrapper">
+                    <canvas class="cover-canvas" id="canvas-${index}"></canvas>
+                </div>
+                <div class="book-info">
+                    <span class="book-tag">${book.tag}</span>
+                    <h3 class="book-title">${book.title}</h3>
+                    <div class="book-author">${book.author} 저</div>
+                    <div class="rating">${book.rating}</div>
+                </div>
+            `;
+            
+            // 카드 클릭 시 모달창 열기
+            card.addEventListener('click', () => openModal(book));
+            grid.appendChild(card);
+
+            // 절대 깨지지 않는 책 표지 그리기 (Canvas 기술 적용)
+            setTimeout(() => {
+                drawBookCover(`canvas-${index}`, book);
+            }, 10);
+        });
+
+        // HTML5 캔버스로 커스텀 고화질 책 표지 렌더링하는 함수
+        function drawBookCover(canvasId, bookData) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            
+            // 실제 해상도를 높여 글씨가 깨지지 않게 처리
+            canvas.width = 300;
+            canvas.height = 380;
+
+            // 1. 책 배경색 칠하기
+            ctx.fillStyle = bookData.color;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 2. 책 표지 내부 은은한 그라데이션 및 입체 디자인 효과
+            let grad = ctx.createLinearGradient(0, 0, canvas.width, 0);
+            grad.addColorStop(0, 'rgba(0,0,0,0.25)'); // 책 등 부분 음영
+            grad.addColorStop(0.05, 'rgba(255,255,255,0.1)');
+            grad.addColorStop(0.1, 'rgba(0,0,0,0)');
+            grad.addColorStop(0.95, 'rgba(0,0,0,0.15)');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 3. 기하학적 원 장식 추가 (감성적인 느낌 연출)
+            ctx.fillStyle = bookData.accentColor;
+            ctx.globalAlpha = 0.15;
             ctx.beginPath();
-            ctx.arc(0, 0, 80, 0, Math.PI * 2);
+            ctx.arc(canvas.width/2, canvas.height/2 + 20, 90, 0, Math.PI*2);
             ctx.fill();
 
-            // 주변 미토콘드리아 및 미생물 표현들
-            drawOrganelle(-120, -100, 35, '#00ffff');
-            drawOrganelle(140, 120, 45, '#ffcc00');
-            drawOrganelle(160, -140, 25, '#00ff66');
-            drawOrganelle(-150, 150, 30, '#a100ff');
-
-            // 아주 작은 미세 입자들 50개 생성
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
-            for (let i = 0; i < 50; i++) {
-                let x = Math.sin(i * 9) * 260;
-                let y = Math.cos(i * 3) * 260;
-                ctx.beginPath();
-                ctx.arc(x, y, 2, 0, Math.PI * 2);
-                ctx.fill();
-            }
-            // --- 그래픽 그리기 끝 ---
-
-            ctx.restore();
-        }
-
-        // 세포 소기관을 그리는 보조 함수
-        function drawOrganelle(x, y, r, color) {
-            ctx.fillStyle = color;
-            ctx.globalAlpha = 0.6;
-            ctx.beginPath();
-            ctx.arc(x, y, r, 0, Math.PI * 2);
-            ctx.fill();
+            // 4. 제목 텍스트 쓰기
             ctx.globalAlpha = 1.0;
-            ctx.strokeStyle = color;
-            ctx.lineWidth = 1.5;
-            ctx.beginPath();
-            ctx.arc(x, y, r + 5, 0, Math.PI * 2);
-            ctx.stroke();
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 22px "Malgun Gothic", sans-serif';
+            ctx.textAlign = 'center';
+            
+            // 제목 글자 수 길면 줄바꿈 처리하기
+            const title = bookData.title;
+            if(title.length > 7) {
+                ctx.fillText(title.substring(0, 7), canvas.width/2, 140);
+                ctx.fillText(title.substring(7), canvas.width/2, 175);
+            } else {
+                ctx.fillText(title, canvas.width/2, 150);
+            }
+
+            // 5. 저자 텍스트 쓰기
+            ctx.fillStyle = bookData.accentColor;
+            ctx.font = '14px "Malgun Gothic", sans-serif';
+            ctx.fillText(bookData.author, canvas.width/2, canvas.height - 50);
         }
 
-        // 1. 마우스 드래그 이벤트
-        container.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            startX = e.clientX - offsetX;
-            startY = e.clientY - offsetY;
+        // 모달 제어 함수들
+        function openModal(book) {
+            modalBody.innerHTML = `
+                <span class="book-tag" style="margin-bottom:8px;">${book.tag}</span>
+                <h3>${book.title}</h3>
+                <div style="color:var(--text-muted); font-size:0.95rem; margin-bottom:15px;">저자: ${book.author} | 평점: ${book.rating}</div>
+                <div class="modal-review">
+                    <h4 style="margin: 0 0 10px 0; font-size: 1.1rem; color: var(--accent);">📝 서평 / 리뷰</h4>
+                    ${book.review}
+                </div>
+            `;
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden'; // 뒷배경 스크롤 방지
+        }
+
+        function closeModal() {
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        closeBtn.addEventListener('click', closeModal);
+        overlay.addEventListener('click', (e) => {
+            if(e.target === overlay) closeModal();
         });
-
-        window.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
-            offsetX = e.clientX - startX;
-            offsetY = e.clientY - startY;
-            draw();
-        });
-
-        window.addEventListener('mouseup', () => { isDragging = false; });
-
-        // 모바일 터치 지원
-        container.addEventListener('touchstart', (e) => {
-            if (e.touches.length === 1) {
-                isDragging = true;
-                startX = e.touches[0].clientX - offsetX;
-                startY = e.touches[0].clientY - offsetY;
-            }
-        });
-
-        window.addEventListener('touchmove', (e) => {
-            if (!isDragging || e.touches.length !== 1) return;
-            offsetX = e.touches[0].clientX - startX;
-            offsetY = e.touches[0].clientY - startY;
-            draw();
-        });
-
-        window.addEventListener('touchend', () => { isDragging = false; });
-
-        // 2. 마우스 휠 줌 기능 (마우스 커서 중심 줌)
-        container.addEventListener('wheel', (e) => {
-            e.preventDefault();
-
-            const zoomFactor = 1.1;
-            let newScale = scale;
-
-            if (e.deltaY < 0) {
-                newScale *= zoomFactor;
-            } else {
-                newScale /= zoomFactor;
-            }
-
-            // 최소 0.4배, 최대 25배 제한
-            newScale = Math.min(Math.max(0.4, newScale), 25);
-
-            // 마우스 커서 위치 기준으로 중심축 조정 계산
-            offsetX = e.clientX - (e.clientX - offsetX) * (newScale / scale);
-            offsetY = e.clientY - (e.clientY - offsetY) * (newScale / scale);
-            scale = newScale;
-
-            draw();
-        }, { passive: false });
-
-        // 초기화 및 창 크기 변경 대응
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
     </script>
 </body>
 </html>

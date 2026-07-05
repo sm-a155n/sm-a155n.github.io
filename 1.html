@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>북리뷰 허브 (Book Review Hub)</title>
+    <title>고전 북리뷰 허브 (Classic Book Review)</title>
     <style>
         :root {
-            --bg-color: #f8f9fa;
+            --bg-color: #f5f4f0; /* 고전 느낌의 은은한 베이지 톤 배경 */
             --card-bg: #ffffff;
-            --text-main: #212529;
-            --text-muted: #6c757d;
-            --accent: #4f46e5;
-            --accent-hover: #4338ca;
-            --border: #e9ecef;
+            --text-main: #1c1917;
+            --text-muted: #78716c;
+            --accent: #7c2d12; /* 고전 서적 느낌의 브라운 딥 컬러 */
+            --accent-hover: #9a3412;
+            --border: #e7e5e4;
         }
 
         body {
@@ -77,6 +77,7 @@
             font-weight: 800;
             margin-bottom: 10px;
             letter-spacing: -1px;
+            color: var(--accent);
         }
 
         .hero p {
@@ -100,7 +101,7 @@
             background-color: var(--card-bg);
             border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
             border: 1px solid var(--border);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             cursor: pointer;
@@ -108,7 +109,7 @@
 
         .book-card:hover {
             transform: translateY(-8px);
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
         }
 
         /* 가상 표지 영역 (Canvas 사용) */
@@ -133,13 +134,14 @@
 
         .book-tag {
             display: inline-block;
-            background-color: #f0fdf4;
-            color: #16a34a;
+            background-color: #fff7ed;
+            color: #c2410c;
             font-size: 0.75rem;
             font-weight: 700;
             padding: 4px 8px;
             border-radius: 6px;
             margin-bottom: 12px;
+            border: 1px solid #ffedd5;
         }
 
         .book-title {
@@ -219,7 +221,7 @@
             position: absolute;
             top: 20px;
             right: 20px;
-            background: #f1f5f9;
+            background: #f5f5f4;
             border: none;
             width: 36px;
             height: 36px;
@@ -241,7 +243,7 @@
             margin-top: 20px;
             padding-top: 20px;
             border-top: 1px solid var(--border);
-            color: #334155;
+            color: #44403c;
             white-space: pre-wrap;
         }
     </style>
@@ -251,29 +253,29 @@
     <!-- 헤더 -->
     <header>
         <div class="header-container">
-            <a href="#" class="logo">📚 BookHub</a>
+            <a href="#" class="logo">🏛️ ClassicHub</a>
             <nav>
                 <a href="#">홈</a>
-                <a href="#">베스트셀러</a>
-                <a href="#">나의 서재</a>
+                <a href="#">시대별 고전</a>
+                <a href="#">명문장 보관함</a>
             </nav>
         </div>
     </header>
 
     <!-- 히어로 배너 -->
     <section class="hero">
-        <h2>지적 여정을 위한 한 걸음</h2>
-        <p>엄선된 도서들의 깊이 있는 리뷰를 만나보세요.</p>
+        <h2>시간의 강을 견뎌낸 위대한 유산</h2>
+        <p>인류의 깊은 지혜와 고뇌가 담긴 고전 명작 리뷰를 만나보세요.</p>
     </section>
 
     <!-- 책 리스트 그리드 -->
     <main class="book-grid" id="bookGrid">
-        <!-- 자바스크립트로 카드가 자동 생성됩니다 -->
+        <!-- 자바스크립트로 고전 서적 카드가 자동 생성됩니다 -->
     </main>
 
     <!-- 푸터 -->
     <footer>
-        <p>© 2026 BookHub Review. All rights reserved.</p>
+        <p>© 2026 ClassicHub. All rights reserved.</p>
     </footer>
 
     <!-- 상세 리뷰 모달창 -->
@@ -287,43 +289,43 @@
     </div>
 
     <script>
-        // 책 데이터 구조 (원하는 대로 리뷰나 제목 수정 가능!)
+        // 새로운 고전 도서 데이터 목록 (기존 도서 완전 제외)
         const books = [
             {
-                title: "달러구트 꿈 백화점",
-                author: "이미예",
-                tag: "소설 / 판타지",
-                rating: "⭐️ 4.8",
-                color: "#1e1b4b",
-                accentColor: "#fbbf24",
-                review: "잠들어야만 입장할 수 있는 상점가에서 일어나는 비밀스럽고도 마음 따뜻한 이야기입니다. 지친 일상 속에서 영혼을 위로해 주는 판타지 소설로, 작가의 독창적인 세계관이 돋보입니다. 읽고 나면 오늘 밤 어떤 꿈을 꿀지 기대하게 만듭니다."
-            },
-            {
-                title: "사피엔스",
-                author: "유발 하라리",
-                tag: "인문 / 역사",
+                title: "노인과 바다",
+                author: "어니스트 헤밍웨이",
+                tag: "세계 문학 / 미국",
                 rating: "⭐️ 4.9",
-                color: "#2d1b10",
-                accentColor: "#e7e5e4",
-                review: "변방의 유인원에서 지구의 지배자가 되기까지 인류의 거대한 역사를 다룬 명작입니다. 인지혁명, 농업혁명, 과학혁명이라는 세 가지 키워드로 인류를 날카롭게 해부합니다. 우리가 당연하게 믿어왔던 사회적 시스템에 대해 근본적인 질문을 던지게 만드는 책입니다."
+                color: "#1e3a8a", /* 깊은 바다색 */
+                accentColor: "#fef08a",
+                review: "쿠바의 늙은 어부 산티아고의 거대한 청새치와의 사투, 그리고 상어 떼의 습격을 그린 헤밍웨이의 정점입니다. '인간은 파멸할지언정 패배하지 않는다'는 명제 아래, 가혹한 운명에 맞서 인간의 존엄성과 불굴의 의지를 간결하고 강렬한 문체로 보여주는 위대한 고전입니다."
             },
             {
-                title: "미드나잇 라이브러리",
-                author: "매트 헤이그",
-                tag: "소설 / 문학",
-                rating: "⭐️ 4.6",
-                color: "#0f172a",
-                accentColor: "#38bdf8",
-                review: "후회로 가득해 삶을 포기하려던 주인공이 삶과 죽음 사이에 존재하는 '자정의 도서관'에서 자신이 다르게 살았을 수도 있는 수많은 인생을 살아보는 이야기입니다. '선택하지 않은 삶에 후회할 필요가 없다'는 묵직한 메시지를 던집니다."
+                title: "데미안",
+                author: "헤르만 헤세",
+                tag: "성장 소설 / 독일",
+                rating: "⭐️ 4.8",
+                color: "#14532d", /* 고풍스러운 다크 그린 */
+                accentColor: "#fde047",
+                review: "싱클레어라는 한 소년이 안락한 세계를 깨고 나와 진정한 자아를 찾아가는 치열한 내면의 여정을 다룹니다. 신비로운 인물 '데미안'을 만나며 겪는 선과 악의 고뇌는 오늘날 방황하는 청춘들에게도 '알을 깨고 나오는 아픔과 성장의 가치'를 고스란히 전해줍니다."
             },
             {
-                title: "도파민네이션",
-                author: "애나 렘키",
-                tag: "과학 / 심리",
+                title: "위대한 개츠비",
+                author: "F. 스콧 피츠제럴드",
+                tag: "세계 문학 / 소설",
                 rating: "⭐️ 4.7",
-                color: "#4c0519",
-                accentColor: "#fda4af",
-                review: "쾌락과 고통의 메커니즘을 뇌과학과 심리학 관점에서 쉽게 풀어낸 책입니다. 스마트폰, SNS 등 중독 유발 요인 가득한 현대사회에서 어떻게 도파민의 균형을 찾고 삶의 통제권을 회복할 수 있는지 아주 실질적인 해답을 제공합니다."
+                color: "#451a03", /* 고급스러운 클래식 브라운 */
+                accentColor: "#fcd34d",
+                review: "1920년대 미국 물질문명의 황금기 속에서 피어난 한 남자의 맹목적이고도 비극적인 사랑을 그린 소설입니다. 화려함 뒤에 숨겨진 인간의 공허함과 아메리칸드림의 환멸을 피츠제럴드 특유의 아름답고 감각적인 문체로 날카롭게 포착해 낸 수작입니다."
+            },
+            {
+                title: "오만과 편견",
+                author: "제인 오스틴",
+                tag: "영국 문학 / 로맨스",
+                rating: "⭐️ 4.8",
+                color: "#4d0727", /* 세련된 딥 버건디 */
+                accentColor: "#fbcfe8",
+                review: "엘리자베스의 '편견'과 다이시의 '오만'이 부딪히며 진정한 사랑을 깨달아가는 과정을 유쾌하고도 섬세하게 다룬 작품입니다. 단순한 연애 소설을 넘어 18세기 영국 상류층 사회의 계급과 결혼 제도를 날카로운 위트와 냉철한 시선으로 풍자하여 문학적 가치가 매우 높습니다."
             }
         ];
 
@@ -348,80 +350,87 @@
                 </div>
             `;
             
-            // 카드 클릭 시 모달창 열기
             card.addEventListener('click', () => openModal(book));
             grid.appendChild(card);
 
-            // 절대 깨지지 않는 책 표지 그리기 (Canvas 기술 적용)
+            // 고전 양장본 디자인 느낌으로 표지 그리기
             setTimeout(() => {
                 drawBookCover(`canvas-${index}`, book);
             }, 10);
         });
 
-        // HTML5 캔버스로 커스텀 고화질 책 표지 렌더링하는 함수
+        // 캔버스 기반 클래식 양장본 스타일 표지 렌더링 함수
         function drawBookCover(canvasId, bookData) {
             const canvas = document.getElementById(canvasId);
             if (!canvas) return;
             const ctx = canvas.getContext('2d');
             
-            // 실제 해상도를 높여 글씨가 깨지지 않게 처리
             canvas.width = 300;
             canvas.height = 380;
 
-            // 1. 책 배경색 칠하기
+            // 1. 기본 표지 배경색
             ctx.fillStyle = bookData.color;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // 2. 책 표지 내부 은은한 그라데이션 및 입체 디자인 효과
+            // 2. 책 등/입체 질감 음영
             let grad = ctx.createLinearGradient(0, 0, canvas.width, 0);
-            grad.addColorStop(0, 'rgba(0,0,0,0.25)'); // 책 등 부분 음영
-            grad.addColorStop(0.05, 'rgba(255,255,255,0.1)');
-            grad.addColorStop(0.1, 'rgba(0,0,0,0)');
-            grad.addColorStop(0.95, 'rgba(0,0,0,0.15)');
+            grad.addColorStop(0, 'rgba(0,0,0,0.3)');
+            grad.addColorStop(0.04, 'rgba(255,255,255,0.08)');
+            grad.addColorStop(0.08, 'rgba(0,0,0,0)');
+            grad.addColorStop(0.96, 'rgba(0,0,0,0.2)');
             ctx.fillStyle = grad;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // 3. 기하학적 원 장식 추가 (감성적인 느낌 연출)
+            // 3. 고전 양장본 문양 사각 프레임 추가
+            ctx.strokeStyle = bookData.accentColor;
+            ctx.lineWidth = 2;
+            ctx.globalAlpha = 0.4;
+            ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
+            ctx.strokeRect(25, 25, canvas.width - 50, canvas.height - 50);
+
+            // 4. 중앙 디자인 데코 (다이아몬드 포인트)
             ctx.fillStyle = bookData.accentColor;
-            ctx.globalAlpha = 0.15;
             ctx.beginPath();
-            ctx.arc(canvas.width/2, canvas.height/2 + 20, 90, 0, Math.PI*2);
+            ctx.moveTo(canvas.width/2, 210);
+            ctx.lineTo(canvas.width/2 + 25, 235);
+            ctx.lineTo(canvas.width/2, 260);
+            ctx.lineTo(canvas.width/2 - 25, 235);
+            ctx.closePath();
             ctx.fill();
 
-            // 4. 제목 텍스트 쓰기
+            // 5. 타이틀 매핑
             ctx.globalAlpha = 1.0;
             ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 22px "Malgun Gothic", sans-serif';
+            ctx.font = 'bold 24px "Malgun Gothic", serif';
             ctx.textAlign = 'center';
             
-            // 제목 글자 수 길면 줄바꿈 처리하기
             const title = bookData.title;
-            if(title.length > 7) {
-                ctx.fillText(title.substring(0, 7), canvas.width/2, 140);
-                ctx.fillText(title.substring(7), canvas.width/2, 175);
+            if(title.length > 6) {
+                ctx.fillText(title.substring(0, 5), canvas.width/2, 115);
+                ctx.fillText(title.substring(5), canvas.width/2, 150);
             } else {
-                ctx.fillText(title, canvas.width/2, 150);
+                ctx.fillText(title, canvas.width/2, 130);
             }
 
-            // 5. 저자 텍스트 쓰기
+            // 6. 작가 이름 매핑
             ctx.fillStyle = bookData.accentColor;
-            ctx.font = '14px "Malgun Gothic", sans-serif';
-            ctx.fillText(bookData.author, canvas.width/2, canvas.height - 50);
+            ctx.font = 'italic 13px "Malgun Gothic", sans-serif';
+            ctx.fillText(bookData.author, canvas.width/2, canvas.height - 65);
         }
 
-        // 모달 제어 함수들
+        // 모달창 제어
         function openModal(book) {
             modalBody.innerHTML = `
                 <span class="book-tag" style="margin-bottom:8px;">${book.tag}</span>
                 <h3>${book.title}</h3>
-                <div style="color:var(--text-muted); font-size:0.95rem; margin-bottom:15px;">저자: ${book.author} | 평점: ${book.rating}</div>
+                <div style="color:var(--text-muted); font-size:0.95rem; margin-bottom:15px;">저자: ${book.author} | 추천 평점: ${book.rating}</div>
                 <div class="modal-review">
-                    <h4 style="margin: 0 0 10px 0; font-size: 1.1rem; color: var(--accent);">📝 서평 / 리뷰</h4>
+                    <h4 style="margin: 0 0 10px 0; font-size: 1.1rem; color: var(--accent);">🏛️ 작품 해설 및 서평</h4>
                     ${book.review}
                 </div>
             `;
             overlay.classList.add('active');
-            document.body.style.overflow = 'hidden'; // 뒷배경 스크롤 방지
+            document.body.style.overflow = 'hidden';
         }
 
         function closeModal() {

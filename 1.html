@@ -6,7 +6,7 @@
     <title>고전 & 판타지 북리뷰 허브</title>
     <style>
         :root {
-            --bg-color: #f7f6f2; /* 책 가독성을 높이는 부드러운 웜톤 */
+            --bg-color: #f7f6f2;
             --card-bg: #ffffff;
             --text-main: #292524;
             --text-muted: #78716c;
@@ -24,7 +24,6 @@
             line-height: 1.6;
         }
 
-        /* 헤더 영역 */
         header {
             background-color: var(--card-bg);
             border-bottom: 1px solid var(--border);
@@ -50,10 +49,8 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            letter-spacing: -0.5px;
         }
 
-        /* 장르 탭 필터 스타일 */
         nav {
             display: flex;
             gap: 8px;
@@ -81,7 +78,6 @@
             background-color: var(--accent);
         }
 
-        /* 타이틀 배너 */
         .hero {
             max-width: 1200px;
             margin: 50px auto 20px auto;
@@ -103,7 +99,6 @@
             margin: 0;
         }
 
-        /* 리스트 그리드 레이아웃 */
         .book-grid {
             max-width: 1200px;
             margin: 40px auto 80px auto;
@@ -113,7 +108,6 @@
             gap: 35px;
         }
 
-        /* 카드 컴포넌트 */
         .book-card {
             background-color: var(--card-bg);
             border-radius: 12px;
@@ -129,7 +123,6 @@
             box-shadow: 0 20px 32px rgba(0, 0, 0, 0.09);
         }
 
-        /* 인터넷 이미지 연동 박스 */
         .cover-wrapper {
             width: 100%;
             height: 360px;
@@ -141,16 +134,15 @@
         .cover-image {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* 프레임 꽉 차게 조절 */
+            object-fit: cover;
             object-position: center;
             transition: transform 0.5s ease;
         }
 
         .book-card:hover .cover-image {
-            transform: scale(1.04); /* 살짝 줌인되는 모던한 효과 */
+            transform: scale(1.04);
         }
 
-        /* 카드 내부 텍스트 구성 */
         .book-info {
             padding: 22px;
         }
@@ -180,7 +172,6 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            color: #1c1917;
         }
 
         .book-author {
@@ -197,7 +188,6 @@
             font-size: 0.9rem;
         }
 
-        /* 푸터 */
         footer {
             background-color: var(--card-bg);
             border-top: 1px solid var(--border);
@@ -207,7 +197,7 @@
             font-size: 0.85rem;
         }
 
-        /* 팝업 모달창 구조 */
+        /* 모달 스타일 스케일업 */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -233,13 +223,15 @@
         .modal-content {
             background: #fff;
             width: 90%;
-            max-width: 580px;
+            max-width: 620px;
+            max-height: 85vh;
             border-radius: 16px;
             padding: 30px;
             position: relative;
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.3);
             transform: translateY(20px);
             transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            overflow-y: auto; /* 내용 많아지면 스크롤 */
         }
 
         .modal-overlay.active .modal-content {
@@ -260,11 +252,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #57534e;
-        }
-
-        .close-btn:hover {
-            background: #e7e5e4;
         }
 
         .modal-body h3 {
@@ -278,14 +265,106 @@
             padding-top: 20px;
             border-top: 1px solid var(--border);
             color: #44403c;
-            white-space: pre-wrap;
-            font-size: 0.98rem;
+        }
+
+        /* ✍️ 새롭게 추가된 리뷰 작성 폼 컴포넌트 */
+        .review-form-section {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 2px dashed var(--border);
+        }
+
+        .review-form-section h4 {
+            margin: 0 0 12px 0;
+            color: var(--accent);
+            font-size: 1.05rem;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-name {
+            width: 120px;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .select-rating {
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background-color: #fff;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .textarea-comment {
+            width: 100%;
+            height: 70px;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            resize: none;
+            outline: none;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+
+        .submit-btn {
+            background-color: var(--accent);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            float: right;
+            transition: background 0.2s;
+        }
+
+        .submit-btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        /* 한 줄 평 목록 레이아웃 */
+        .user-reviews-list {
+            margin-top: 20px;
+            clear: both;
+        }
+
+        .user-review-item {
+            background-color: #fcfbf9;
+            border: 1px solid var(--border);
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .user-review-header {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            margin-bottom: 4px;
+        }
+        
+        .user-review-name {
+            font-weight: 700;
+            color: #44403c;
         }
     </style>
 </head>
 <body>
 
-    <!-- 헤더 내비게이션 -->
     <header>
         <div class="header-container">
             <a href="#" class="logo" onclick="filterGenre('all')">🏛️ BookHub</a>
@@ -297,32 +376,47 @@
         </div>
     </header>
 
-    <!-- 인트로 섹션 -->
     <section class="hero">
         <h2 id="heroTitle">시대를 초월한 이야기의 숲</h2>
-        <p id="heroDesc">문학 고전부터 상상력의 정점인 SF/판타지까지, 엄선된 서평을 만나보세요.</p>
+        <p id="heroDesc">문학 고전부터 상상력의 정점인 SF/판타지까지, 엄선된 서평을 만나보고 한 줄 평을 남겨보세요.</p>
     </section>
 
-    <!-- 책 리스트 뷰 영역 -->
     <main class="book-grid" id="bookGrid"></main>
 
-    <!-- 푸터 -->
     <footer>
         <p>© 2026 BookHub Classic & Fantasy. All rights reserved.</p>
     </footer>
 
-    <!-- 모달 레이어 팝업 -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal-content">
             <button class="close-btn" id="closeBtn">&times;</button>
             <div class="modal-body" id="modalBody"></div>
+            
+            <!-- ✍️ 모달 내부 리뷰 작성 및 한줄평 피드 영역 -->
+            <div class="review-form-section">
+                <h4>✒️ 독자 한 줄 평 남기기</h4>
+                <div class="form-group">
+                    <input type="text" id="revName" class="input-name" placeholder="닉네임" maxlength="10">
+                    <select id="revRating" class="select-rating">
+                        <option value="⭐️⭐️⭐️⭐️⭐️">⭐️⭐️⭐️⭐️⭐️ (5점)</option>
+                        <option value="⭐️⭐️⭐️⭐️">⭐️⭐️⭐️⭐️ (4점)</option>
+                        <option value="⭐️⭐️⭐️">⭐️⭐️⭐️ (3점)</option>
+                        <option value="⭐️⭐️">⭐️⭐️ (2점)</option>
+                        <option value="⭐️">⭐️ (1점)</option>
+                    </select>
+                </div>
+                <textarea id="revComment" class="textarea-comment" placeholder="작품에 대한 나만의 감상평을 한 줄로 기록해 보세요." maxlength="100"></textarea>
+                <button class="submit-btn" id="submitReviewBtn">등록하기</button>
+                
+                <div class="user-reviews-list" id="userReviewsList"></div>
+            </div>
         </div>
     </div>
 
     <script>
-        // 고화질 북커버 이미지 소스를 인터넷에서 파싱해 배치한 도서 데이터 구조
         const books = [
             {
+                id: "old-man",
                 title: "노인과 바다",
                 author: "어니스트 헤밍웨이",
                 category: "classic",
@@ -332,6 +426,7 @@
                 review: "쿠바의 늙은 어부 산티아고의 거대한 청새치와의 사투를 그린 명작입니다. 가혹한 운명에 맞서 인간의 존엄성과 불굴의 의지를 간결하고 강렬한 하드보일드 문체로 보여줍니다."
             },
             {
+                id: "demian",
                 title: "데미안",
                 author: "헤르만 헤세",
                 category: "classic",
@@ -341,6 +436,7 @@
                 review: "싱클레어라는 한 소년이 안락한 세계를 깨고 나와 진정한 자아를 찾아가는 치열한 내면의 여정을 다룹니다. '알을 깨고 나오는 아픔과 성장의 가치'를 고스란히 전해줍니다."
             },
             {
+                id: "gatsby",
                 title: "위대한 개츠비",
                 author: "F. 스콧 피츠제럴드",
                 category: "classic",
@@ -350,6 +446,7 @@
                 review: "1920년대 미국 물질문명의 황금기 속에서 피어난 한 남자의 비극적인 사랑을 그린 소설입니다. 화려함 뒤에 숨겨진 인간의 공허함과 아메리칸드림의 환멸을 아름다운 문체로 포착했습니다."
             },
             {
+                id: "pride",
                 title: "오만과 편견",
                 author: "제인 오스틴",
                 category: "classic",
@@ -359,6 +456,7 @@
                 review: "엘리자베스의 '편견'과 다이시의 '오만'이 부딪히며 진정한 사랑을 깨달아가는 과정을 다룬 작품입니다. 18세기 영국 사회의 결혼 제도를 날카로운 위트와 냉철한 시선으로 풍자했습니다."
             },
             {
+                id: "space",
                 title: "2001 스페이스 오디세이",
                 author: "아더 C. 클라크",
                 category: "fantasy",
@@ -368,6 +466,7 @@
                 review: "인류의 기원과 우주 진화, 그리고 인공지능 HAL9000과의 갈등을 완벽하게 예견한 하드 SF의 기념비적인 걸작입니다. 과학적 정밀함과 초월적 존재에 대한 탐구가 가득합니다."
             },
             {
+                id: "lotr",
                 title: "반지의 제왕",
                 author: "J.R.R. 톨킨",
                 category: "fantasy",
@@ -382,8 +481,10 @@
         const overlay = document.getElementById('modalOverlay');
         const modalBody = document.getElementById('modalBody');
         const closeBtn = document.getElementById('closeBtn');
+        const userReviewsList = document.getElementById('userReviewsList');
+        
+        let currentActiveBookId = null; // 현재 띄워진 책 아이디 트래킹 변수
 
-        // 필터링 제어 엔진
         function filterGenre(genre) {
             const buttons = document.querySelectorAll('#genreNav button');
             buttons.forEach(btn => btn.classList.remove('active'));
@@ -394,19 +495,6 @@
                 if (genre === 'fantasy') return btn.innerText === 'SF / 판타지';
             });
             if(currentBtn) currentBtn.classList.add('active');
-
-            const h2 = document.getElementById('heroTitle');
-            const p = document.getElementById('heroDesc');
-            if(genre === 'all') {
-                h2.innerText = "시대를 초월한 이야기의 숲";
-                p.innerText = "문학 고전부터 상상력의 정점인 SF/판타지까지, 엄선된 서평을 만나보세요.";
-            } else if(genre === 'classic') {
-                h2.innerText = "🏛️ 시대별 고전 문학";
-                p.innerText = "시간의 강을 견뎌내며 살아남은 위대한 대작들과 인류의 지혜를 관찰합니다.";
-            } else if(genre === 'fantasy') {
-                h2.innerText = "🚀 SF / 판타지 마스터피스";
-                p.innerText = "끝없는 우주적 상상력과 새로운 세계관을 창조해 낸 위대한 환상 문학의 정점.";
-            }
 
             grid.innerHTML = '';
             const filteredBooks = genre === 'all' ? books : books.filter(b => b.category === genre);
@@ -433,22 +521,91 @@
             });
         }
 
-        // 상세 모달 연출
+        // 모달 팝업 열기 + 한줄평 렌더링
         function openModal(book) {
+            currentActiveBookId = book.id;
             const tagClass = book.category === 'fantasy' ? 'book-tag fantasy-tag' : 'book-tag';
             const icon = book.category === 'fantasy' ? '🚀' : '🏛️';
             
             modalBody.innerHTML = `
                 <span class="${tagClass}" style="margin-bottom:8px;">${book.tag}</span>
                 <h3>${book.title}</h3>
-                <div style="color:var(--text-muted); font-size:0.92rem; margin-bottom:15px;">저자: ${book.author} | 평점: ${book.rating}</div>
+                <div style="color:var(--text-muted); font-size:0.92rem; margin-bottom:15px;">저자: ${book.author} | 기본평점: ${book.rating}</div>
                 <div class="modal-review">
                     <h4 style="margin: 0 0 10px 0; font-size: 1.05rem; color: var(--accent);">${icon} 작품 해설 및 서평</h4>
-                    ${book.review}
+                    <p style="margin:0; font-size:0.95rem; color:#44403c; white-space:pre-wrap;">${book.review}</p>
                 </div>
             `;
+            
+            // 입력창 초기화
+            document.getElementById('revName').value = '';
+            document.getElementById('revComment').value = '';
+            
+            // 저장된 사용자 한줄평 로드
+            loadUserReviews();
+            
             overlay.classList.add('active');
             document.body.style.overflow = 'hidden';
+        }
+
+        // 한 줄 평 목록 로드 및 뿌려주기
+        function loadUserReviews() {
+            userReviewsList.innerHTML = '';
+            // 로컬스토리지 키 설계: 익명 리뷰 데이터를 객체화하여 저장
+            const allStorageData = JSON.parse(localStorage.getItem('book_hub_reviews')) || {};
+            const bookReviews = allStorageData[currentActiveBookId] || [];
+            
+            if(bookReviews.length === 0) {
+                userReviewsList.innerHTML = '<p style="color:var(--text-muted); font-size:0.85rem; text-align:center; margin:20px 0;">아직 등록된 독자 평이 없습니다. 첫 리뷰를 작성해 보세요!</p>';
+                return;
+            }
+
+            bookReviews.forEach(rev => {
+                const item = document.createElement('div');
+                item.className = 'user-review-item';
+                item.innerHTML = `
+                    <div class="user-review-header">
+                        <span class="user-review-name">${escapeHtml(rev.name)}</span>
+                        <span>${rev.rating}</span>
+                    </div>
+                    <div style="color:#57534e; word-break: break-all;">${escapeHtml(rev.comment)}</div>
+                `;
+                userReviewsList.appendChild(item);
+            });
+        }
+
+        // 리뷰 등록 액션 스크립트
+        document.getElementById('submitReviewBtn').addEventListener('click', () => {
+            const nameInput = document.getElementById('revName').value.trim();
+            const ratingInput = document.getElementById('revRating').value;
+            const commentInput = document.getElementById('revComment').value.trim();
+
+            if(!nameInput) { alert('닉네임을 입력해 주세요.'); return; }
+            if(!commentInput) { alert('감상평 내용을 입력해 주세요.'); return; }
+
+            const allStorageData = JSON.parse(localStorage.getItem('book_hub_reviews')) || {};
+            if(!allStorageData[currentActiveBookId]) {
+                allStorageData[currentActiveBookId] = [];
+            }
+
+            // 새 리뷰 객체 추가
+            allStorageData[currentActiveBookId].unshift({
+                name: nameInput,
+                rating: ratingInput,
+                comment: commentInput
+            });
+
+            localStorage.setItem('book_hub_reviews', JSON.stringify(allStorageData));
+            
+            // 입력 폼 클리어 및 리스트 갱신
+            document.getElementById('revName').value = '';
+            document.getElementById('revComment').value = '';
+            loadUserReviews();
+        });
+
+        // XSS 공격 방어용 텍스트 이스케이프 함수
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
 
         function closeModal() {
@@ -457,11 +614,8 @@
         }
 
         closeBtn.addEventListener('click', closeModal);
-        overlay.addEventListener('click', (e) => {
-            if(e.target === overlay) closeModal();
-        });
+        overlay.addEventListener('click', (e) => { if(e.target === overlay) closeModal(); });
 
-        // 스타트업 렌더링
         filterGenre('all');
     </script>
 </body>

@@ -1,296 +1,173 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<title>미시 세계 월드</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>미시 세계 월드 (줌 + 드래그)</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #0b0f19;
+            font-family: 'Malgun Gothic', sans-serif;
+            color: #fff;
+            user-select: none;
+        }
 
-<style>
+        h1 {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            margin: 0;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 1.5rem;
+            pointer-events: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            letter-spacing: -0.5px;
+        }
 
-/* ===== 기본 설정 ===== */
+        #world-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            cursor: grab;
+            overflow: hidden;
+        }
 
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
+        #world-container:active {
+            cursor: grabbing;
+        }
 
-body{
-    overflow:hidden;
-    background:#0b1020;
-    color:#fff;
-    font-family:Arial,sans-serif;
-}
+        #micro-image {
+            position: absolute;
+            transform-origin: 0 0;
+            transition: transform 0.08s ease-out;
+            will-change: transform;
+            /* 기본 이미지 크기 지정 */
+            width: 1200px;
+            height: 1200px;
+        }
 
-h1{
-    position:fixed;
-    top:10px;
-    left:50%;
-    transform:translateX(-50%);
-    font-size:18px;
-    opacity:.9;
-    z-index:100;
-}
-
-/* ===== 월드 ===== */
-
-#world{
-
-    position:absolute;
-    left:0;
-    top:0;
-
-    height:100vh;
-
-    display:flex;
-    align-items:center;
-
-    gap:250px;
-
-    padding-left:300px;
-
-    transform-origin:0 0;
-    will-change:transform;
-
-}
-
-.item{
-
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    text-align:center;
-
-}
-
-/* 기존 동그라미 */
-
-.circle{
-
-    border-radius:50%;
-
-    background:
-    radial-gradient(
-    circle at 30% 30%,
-    #22c55e,
-    #065f46
-    );
-
-    box-shadow:
-    0 0 25px rgba(34,197,94,.6);
-
-}
-
-/* 새 이미지용 */
-
-.photo{
-
-    object-fit:contain;
-
-    filter:
-    drop-shadow(
-    0 0 18px rgba(255,255,255,.25)
-    );
-
-    user-select:none;
-    pointer-events:none;
-
-}
-
-.name{
-
-    margin-top:12px;
-    font-size:15px;
-    font-weight:bold;
-
-}
-
-.size{
-
-    font-size:11px;
-    opacity:.75;
-
-}
-
-</style>
-
+        .instructions {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 8px 16px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            pointer-events: none;
+            text-align: center;
+        }
+    </style>
 </head>
-
 <body>
 
-<h1>
-🦠 미시 세계 월드 (줌 + 드래그)
-</h1>
+    <h1>🦠 미시 세계 월드 (줌 + 드래그)</h1>
+    
+    <div id="world-container">
+        <!-- 가상의 우주/미시세계 그래픽 이미지를 코드로 직접 내장 (외부 링크 X) -->
+        <img id="micro-image" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='1200' viewBox='0 0 1200 1200'><rect width='1200' height='1200' fill='%230b0f19'/><circle cx='600' cy='600' r='400' fill='none' stroke='%2300ffcc' stroke-width='4' opacity='0.3'/><circle cx='600' cy='600' r='200' fill='none' stroke='%2300ffcc' stroke-width='2' opacity='0.5'/><circle cx='600' cy='600' r='50' fill='%23ff0055' opacity='0.8'/><circle cx='450' cy='500' r='30' fill='%2300ffcc' opacity='0.7'/><circle cx='720' cy='700' r='45' fill='%2300ffff' opacity='0.6'/><circle cx='550' cy='750' r='25' fill='%23ffcc00' opacity='0.7'/><g stroke='%23fff' stroke-width='1' opacity='0.2'><line x1='0' y1='600' x2='1200' y2='600'/><line x1='600' y1='0' x2='600' y2='1200'/></g></svg>" alt="Micro World">
+    </div>
 
-<div id="world"></div>
+    <div class="instructions">🖱️ 마우스 휠: 줌 인/아웃 | 🖐️ 드래그: 화면 이동</div>
 
-<script>
-  
-/* =========================
-   📊 미시 세계 데이터
-========================= */
+    <script>
+        const container = document.getElementById('world-container');
+        const img = document.getElementById('micro-image');
 
-const data = [
-  { name: "세포", size: 10, type: "image", src: "cell.png" },
-  { name: "박테리아", size: 1, type: "image", src: "bacteria.png" },
-  { name: "DNA", size: 0.1, type: "image", src: "dna.png" },
-  { name: "단백질", size: 0.01, type: "image", src: "protein.png" },
-  { name: "바이러스", size: 0.001, type: "image", src: "virus.png" },
-  { name: "원자", size: 0.0001, type: "image", src: "atom.png" },
-  { name: "전자", size: 0.00001, type: "image", src: "electron.png" }
-];
+        let scale = 1;
+        let pointX = 0;
+        let pointY = 0;
+        let startX = 0;
+        let startY = 0;
+        let isPanning = false;
 
-/* =========================
-   🌍 DOM
-========================= */
+        // 중앙 정렬 함수
+        function centerImage() {
+            pointX = (window.innerWidth - img.offsetWidth * scale) / 2;
+            pointY = (window.innerHeight - img.offsetHeight * scale) / 2;
+            updateTransform();
+        }
 
-const world = document.getElementById("world");
+        function updateTransform() {
+            img.style.transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`;
+        }
 
-/* =========================
-   📏 로그 스케일
-========================= */
+        // 초기 실행 및 이미지 로드 확인
+        if (img.complete) {
+            centerImage();
+        } else {
+            img.onload = centerImage;
+        }
 
-function scale(size) {
-  return Math.log10(size + 1e-10) * -80;
-}
+        // 1. 드래그 기능
+        container.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            startX = e.clientX - pointX;
+            startY = e.clientY - pointY;
+            isPanning = true;
+        });
 
-/* =========================
-   🧠 생성 함수
-========================= */
+        window.addEventListener('mousemove', (e) => {
+            if (!isPanning) return;
+            pointX = e.clientX - startX;
+            pointY = e.clientY - startY;
+            updateTransform();
+        });
 
-data.forEach(d => {
+        window.addEventListener('mouseup', () => {
+            isPanning = false;
+        });
 
-  const el = document.createElement("div");
-  el.className = "item";
+        // 터치 지원 (모바일)
+        container.addEventListener('touchstart', (e) => {
+            if(e.touches.length === 1) {
+                isPanning = true;
+                startX = e.touches[0].clientX - pointX;
+                startY = e.touches[0].clientY - pointY;
+            }
+        });
 
-  const s = Math.abs(scale(d.size)) + 30;
+        window.addEventListener('touchmove', (e) => {
+            if (!isPanning || e.touches.length !== 1) return;
+            pointX = e.touches[0].clientX - startX;
+            pointY = e.touches[0].clientY - startY;
+            updateTransform();
+        });
 
-/* ↓↓↓ 여기서 이미지/도형 결정 (3/4에서 계속) ↓↓↓ */
+        window.addEventListener('touchend', () => { isPanning = false; });
 
-/* =========================
-   🎨 시각 요소 생성
-========================= */
+        // 2. 줌 기능 (마우스 휠)
+        container.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            
+            const xs = (e.clientX - pointX) / scale;
+            const ys = (e.clientY - pointY) / scale;
+            
+            const delta = -e.deltaY;
+            if (delta > 0) {
+                scale *= 1.15;
+            } else {
+                scale /= 1.15;
+            }
+            
+            scale = Math.min(Math.max(0.3, scale), 20);
 
-  let visual;
+            pointX = e.clientX - xs * scale;
+            pointY = e.clientY - ys * scale;
 
-  if (d.type === "image") {
+            updateTransform();
+        }, { passive: false });
 
-    visual = document.createElement("img");
-    visual.src = d.src;
-    visual.alt = d.name;
-    visual.className = "photo";
-
-    // 크기 설정 (로그 스케일 반영)
-    visual.style.width = (s + 60) + "px";
-    visual.style.height = "auto";
-
-  } else {
-
-    // fallback (사용 안 하지만 유지)
-    visual = document.createElement("div");
-    visual.className = "circle";
-    visual.style.width = s + "px";
-    visual.style.height = s + "px";
-  }
-
-/* =========================
-   🏷️ 텍스트
-========================= */
-
-  const name = document.createElement("div");
-  name.className = "name";
-  name.innerText = d.name;
-
-  const size = document.createElement("div");
-  size.className = "size";
-  size.innerText = d.size + " cm";
-
-/* =========================
-   📦 조립
-========================= */
-
-  el.appendChild(visual);
-  el.appendChild(name);
-  el.appendChild(size);
-
-  world.appendChild(el);
-
-});
-
-/* =========================
-   🖱️ 드래그 상태
-========================= */
-
-let zoom = 1;
-let targetZoom = 1;
-
-let x = 0, y = 0;
-let tx = 0, ty = 0;
-
-let dragging = false;
-let startX, startY;
-
-/* =========================
-   🖱️ 드래그 시작
-========================= */
-
-document.addEventListener("mousedown", e => {
-  dragging = true;
-  startX = e.clientX - tx;
-  startY = e.clientY - ty;
-});
-
-/* =========================
-   🖱️ 드래그 종료
-========================= */
-
-document.addEventListener("mouseup", () => {
-  dragging = false;
-});
-
-/* =========================
-   🖱️ 드래그 이동
-========================= */
-
-document.addEventListener("mousemove", e => {
-  if (!dragging) return;
-
-  tx = e.clientX - startX;
-  ty = e.clientY - startY;
-});
-
-/* =========================
-   🔍 줌 (휠)
-========================= */
-
-document.addEventListener("wheel", e => {
-
-  targetZoom += e.deltaY * -0.001;
-
-  targetZoom = Math.min(Math.max(0.3, targetZoom), 6);
-
-});
-
-/* =========================
-   🎬 애니메이션 루프
-========================= */
-
-function animate() {
-
-  zoom += (targetZoom - zoom) * 0.08;
-
-  x += (tx - x) * 0.12;
-  y += (ty - y) * 0.12;
-
-  world.style.transform =
-    `translate(${x}px, ${y}px) scale(${zoom})`;
-
-  requestAnimationFrame(animate);
-
-}
-
-animate();
-
-</script>
-
+        window.addEventListener('resize', centerImage);
+    </script>
 </body>
 </html>

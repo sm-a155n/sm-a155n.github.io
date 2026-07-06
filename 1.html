@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>고전 & 판타지 북리뷰 허브 (Ver 2.0)</title>
+    <title>고전 & 판타지 북리뷰 허브 (Ver 3.0)</title>
     <style>
         :root {
             --bg-color: #f7f6f2;
@@ -197,7 +197,6 @@
             font-size: 0.85rem;
         }
 
-        /* 모달 팝업 레이아웃 고도화 */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -267,7 +266,6 @@
             color: #44403c;
         }
 
-        /* 독자 평점 및 쓰기 컴포넌트 */
         .review-form-section {
             margin-top: 25px;
             padding-top: 20px;
@@ -386,7 +384,6 @@
         <p>© 2026 BookHub Classic & Fantasy. All rights reserved.</p>
     </footer>
 
-    <!-- 모달창 및 내부에 리뷰 폼 삽입 -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal-content">
             <button class="close-btn" id="closeBtn">&times;</button>
@@ -397,11 +394,11 @@
                 <div class="form-group">
                     <input type="text" id="revName" class="input-name" placeholder="닉네임" maxlength="10">
                     <select id="revRating" class="select-rating">
-                        <option value="⭐️⭐️⭐️⭐️⭐️">⭐️⭐️⭐️⭐️⭐️ (5점)</option>
-                        <option value="⭐️⭐️⭐️⭐️">⭐️⭐️⭐️⭐️ (4점)</option>
-                        <option value="⭐️⭐️⭐️">⭐️⭐️⭐️ (3점)</option>
-                        <option value="⭐️⭐️">⭐️⭐️ (2점)</option>
-                        <option value="⭐️">⭐️ (1점)</option>
+                        <option value="5">⭐️⭐️⭐️⭐️⭐️ (5점)</option>
+                        <option value="4">⭐️⭐️⭐️⭐️ (4점)</option>
+                        <option value="3">⭐️⭐️⭐️ (3점)</option>
+                        <option value="2">⭐️⭐️ (2점)</option>
+                        <option value="1">⭐️ (1점)</option>
                     </select>
                 </div>
                 <textarea id="revComment" class="textarea-comment" placeholder="작품에 대한 한 줄 감상평을 기록해 보세요." maxlength="100"></textarea>
@@ -420,7 +417,7 @@
                 author: "어니스트 헤밍웨이",
                 category: "classic",
                 tag: "세계 문학 / 미국",
-                rating: "⭐️ 4.9",
+                defaultRating: 4.9,
                 coverUrl: "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=600&q=80",
                 review: "쿠바의 늙은 어부 산티아고의 거대한 청새치와의 사투를 그린 명작입니다. 가혹한 운명에 맞서 인간의 존엄성과 불굴의 의지를 간결하고 강렬한 하드보일드 문체로 보여줍니다."
             },
@@ -430,7 +427,7 @@
                 author: "헤르만 헤세",
                 category: "classic",
                 tag: "성장 소설 / 독일",
-                rating: "⭐️ 4.8",
+                defaultRating: 4.8,
                 coverUrl: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=600&q=80",
                 review: "싱클레어라는 한 소년이 안락한 세계를 깨고 나와 진정한 자아를 찾아가는 치열한 내면의 여정을 다룹니다. '알을 깨고 나오는 아픔과 성장의 가치'를 고스란히 전해줍니다."
             },
@@ -440,9 +437,9 @@
                 author: "F. 스콧 피츠제럴드",
                 category: "classic",
                 tag: "세계 문학 / 소설",
-                rating: "⭐️ 4.7",
+                defaultRating: 4.7,
                 coverUrl: "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&w=600&q=80",
-                review: "1920년대 미국 물질문명의 황금기 속에서 피어난 한 남자의 비극적인 사랑을 그린 소설입니다. 화려함 뒤에 숨겨진 인간의 공허함และ 아메리칸드림의 환멸을 아름다운 문체로 포착했습니다."
+                review: "1920년대 미국 물질문명의 황금기 속에서 피어난 한 남자의 비극적인 사랑을 그린 소설입니다. 화려함 뒤에 숨겨진 인간의 공허함과 아메리칸드림의 환멸을 아름다운 문체로 포착했습니다."
             },
             {
                 id: "pride-prejudice",
@@ -450,7 +447,7 @@
                 author: "제인 오스틴",
                 category: "classic",
                 tag: "영국 문학 / 로맨스",
-                rating: "⭐️ 4.8",
+                defaultRating: 4.8,
                 coverUrl: "https://images.unsplash.com/photo-1474932430478-367dbb6832c1?auto=format&fit=crop&w=600&q=80",
                 review: "엘리자베스의 '편견'과 다이시의 '오만'이 부딪히며 진정한 사랑을 깨달아가는 과정을 다룬 작품입니다. 18세기 영국 사회의 결혼 제도를 날카로운 위트와 냉철한 시선으로 풍자했습니다."
             },
@@ -460,7 +457,7 @@
                 author: "아더 C. 클라크",
                 category: "fantasy",
                 tag: "SF / 하드 SF",
-                rating: "⭐️ 4.9",
+                defaultRating: 4.9,
                 coverUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=600&q=80",
                 review: "인류의 기원과 우주 진화, 그리고 인공지능 HAL9000과의 갈등을 완벽하게 예견한 하드 SF의 기념비적인 걸작입니다. 과학적 정밀함과 초월적 존재에 대한 탐구가 가득합니다."
             },
@@ -470,7 +467,7 @@
                 author: "J.R.R. 톨킨",
                 category: "fantasy",
                 tag: "판타지 / 하이 판타지",
-                rating: "⭐️ 5.0",
+                defaultRating: 5.0,
                 coverUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=600&q=80",
                 review: "현대 판타지 문학의 뼈대를 세운 절대적인 마스터피스입니다. 가상의 중간계 세계관의 고유 언어와 신화까지 완벽 창조하여 절대반지를 파괴하러 가는 호빗들의 여정을 흥미진진하게 다룹니다."
             }
@@ -483,8 +480,26 @@
         const userReviewsList = document.getElementById('userReviewsList');
         
         let currentActiveBookId = null;
+        let currentGenreFilter = 'all';
 
+        // 🧮 특정 도서의 댓글 평균 평점을 계산하는 핵심 함수
+        function getAverageRating(book) {
+            const allStorageData = JSON.parse(localStorage.getItem('book_hub_reviews_v3')) || {};
+            const bookReviews = allStorageData[book.id] || [];
+            
+            if (bookReviews.length === 0) {
+                return `⭐️ ${book.defaultRating.toFixed(1)}`; // 리뷰가 없으면 기본 점수 반환
+            }
+            
+            const totalScore = bookReviews.reduce((sum, rev) => sum + parseFloat(rev.score), 0);
+            const average = totalScore / bookReviews.length;
+            
+            return `⭐️ ${average.toFixed(1)} (${bookReviews.length}명 참여)`;
+        }
+
+        // 메인 리스트 렌더링 함수
         function filterGenre(genre) {
+            currentGenreFilter = genre;
             const buttons = document.querySelectorAll('#genreNav button');
             buttons.forEach(btn => btn.classList.remove('active'));
             
@@ -516,6 +531,9 @@
                 card.className = 'book-card';
                 const tagClass = book.category === 'fantasy' ? 'book-tag fantasy-tag' : 'book-tag';
                 
+                // 실시간 댓글 평균 평점 적용
+                const dynamicRating = getAverageRating(book);
+
                 card.innerHTML = `
                     <div class="cover-wrapper">
                         <img class="cover-image" src="${book.coverUrl}" alt="${book.title} 표지" loading="lazy">
@@ -524,7 +542,7 @@
                         <span class="${tagClass}">${book.tag}</span>
                         <h3 class="book-title">${book.title}</h3>
                         <div class="book-author">${book.author} 저</div>
-                        <div class="rating">${book.rating}</div>
+                        <div class="rating">${dynamicRating}</div>
                     </div>
                 `;
                 
@@ -533,20 +551,10 @@
             });
         }
 
+        // 모달 열기 함수
         function openModal(book) {
             currentActiveBookId = book.id;
-            const tagClass = book.category === 'fantasy' ? 'book-tag fantasy-tag' : 'book-tag';
-            const icon = book.category === 'fantasy' ? '🚀' : '🏛️';
-            
-            modalBody.innerHTML = `
-                <span class="${tagClass}" style="margin-bottom:8px;">${book.tag}</span>
-                <h3>${book.title}</h3>
-                <div style="color:var(--text-muted); font-size:0.92rem; margin-bottom:15px;">저자: ${book.author} | 평점: ${book.rating}</div>
-                <div class="modal-review">
-                    <h4 style="margin: 0 0 10px 0; font-size: 1.05rem; color: var(--accent);">${icon} 작품 해설 및 서평</h4>
-                    <p style="margin:0; font-size:0.95rem; color:#44403c; white-space:pre-wrap;">${book.review}</p>
-                </div>
-            `;
+            updateModalHeader(book);
             
             document.getElementById('revName').value = '';
             document.getElementById('revComment').value = '';
@@ -557,9 +565,27 @@
             document.body.style.overflow = 'hidden';
         }
 
+        // 모달창 내 상단 서평 텍스트 렌더링 (평균 평점 실시간 변화 반영 목적)
+        function updateModalHeader(book) {
+            const tagClass = book.category === 'fantasy' ? 'book-tag fantasy-tag' : 'book-tag';
+            const icon = book.category === 'fantasy' ? '🚀' : '🏛️';
+            const dynamicRating = getAverageRating(book);
+
+            modalBody.innerHTML = `
+                <span class="${tagClass}" style="margin-bottom:8px;">${book.tag}</span>
+                <h3>${book.title}</h3>
+                <div style="color:var(--text-muted); font-size:0.92rem; margin-bottom:15px;">저자: ${book.author} | 현재평점: ${dynamicRating}</div>
+                <div class="modal-review">
+                    <h4 style="margin: 0 0 10px 0; font-size: 1.05rem; color: var(--accent);">${icon} 작품 해설 및 서평</h4>
+                    <p style="margin:0; font-size:0.95rem; color:#44403c; white-space:pre-wrap;">${book.review}</p>
+                </div>
+            `;
+        }
+
+        // 한 줄 평 목록 로드 및 뿌려주기
         function loadUserReviews() {
             userReviewsList.innerHTML = '';
-            const allStorageData = JSON.parse(localStorage.getItem('book_hub_reviews_v2')) || {};
+            const allStorageData = JSON.parse(localStorage.getItem('book_hub_reviews_v3')) || {};
             const bookReviews = allStorageData[currentActiveBookId] || [];
             
             if(bookReviews.length === 0) {
@@ -570,10 +596,14 @@
             bookReviews.forEach(rev => {
                 const item = document.createElement('div');
                 item.className = 'user-review-item';
+                
+                let stars = '';
+                for(let i=0; i<parseInt(rev.score); i++) stars += '⭐️';
+
                 item.innerHTML = `
                     <div class="user-review-header">
                         <span class="user-review-name">${escapeHtml(rev.name)}</span>
-                        <span>${rev.rating}</span>
+                        <span>${stars}</span>
                     </div>
                     <div style="color:#57534e; word-break: break-all;">${escapeHtml(rev.comment)}</div>
                 `;
@@ -581,30 +611,39 @@
             });
         }
 
+        // 댓글 등록 액션 버튼
         document.getElementById('submitReviewBtn').addEventListener('click', () => {
             const nameInput = document.getElementById('revName').value.trim();
-            const ratingInput = document.getElementById('revRating').value;
+            const scoreInput = document.getElementById('revRating').value;
             const commentInput = document.getElementById('revComment').value.trim();
 
             if(!nameInput) { alert('닉네임을 입력해 주세요.'); return; }
             if(!commentInput) { alert('내용을 입력해 주세요.'); return; }
 
-            const allStorageData = JSON.parse(localStorage.getItem('book_hub_reviews_v2')) || {};
+            const allStorageData = JSON.parse(localStorage.getItem('book_hub_reviews_v3')) || {};
             if(!allStorageData[currentActiveBookId]) {
                 allStorageData[currentActiveBookId] = [];
             }
 
             allStorageData[currentActiveBookId].unshift({
                 name: nameInput,
-                rating: ratingInput,
+                score: scoreInput,
                 comment: commentInput
             });
 
-            localStorage.setItem('book_hub_reviews_v2', JSON.stringify(allStorageData));
+            localStorage.setItem('book_hub_reviews_v3', JSON.stringify(allStorageData));
             
+            // 1. 입력창 클리어
             document.getElementById('revName').value = '';
             document.getElementById('revComment').value = '';
+            
+            // 2. 모달 내 실시간 점수 및 리스트 새로고침
+            const targetBook = books.find(b => b.id === currentActiveBookId);
+            updateModalHeader(targetBook);
             loadUserReviews();
+            
+            // 3. 모달을 닫았을 때 메인 리스트 카드 평점도 즉시 동기화
+            filterGenre(currentGenreFilter);
         });
 
         function escapeHtml(str) {

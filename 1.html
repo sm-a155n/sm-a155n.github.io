@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>고전 & 판타지 북리뷰 허브 (Ver 3.0)</title>
+    <title>고전 & 판타지 북리뷰 허브 (Ver 5.0)</title>
     <style>
         :root {
             --bg-color: #f7f6f2;
@@ -285,7 +285,7 @@
         }
 
         .input-name {
-            width: 120px;
+            width: 140px;
             padding: 10px;
             border: 1px solid var(--border);
             border-radius: 8px;
@@ -344,6 +344,7 @@
             border-radius: 8px;
             margin-bottom: 8px;
             font-size: 0.9rem;
+            position: relative;
         }
 
         .user-review-header {
@@ -352,11 +353,30 @@
             color: var(--text-muted);
             font-size: 0.8rem;
             margin-bottom: 4px;
+            padding-right: 24px;
         }
         
         .user-review-name {
             font-weight: 700;
             color: #44403c;
+        }
+
+        .delete-review-btn {
+            position: absolute;
+            top: 12px;
+            right: 14px;
+            background: none;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 0.9rem;
+            padding: 2px;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+
+        .delete-review-btn:hover {
+            opacity: 1;
         }
     </style>
 </head>
@@ -410,6 +430,13 @@
     </div>
 
     <script>
+        // 🔒 [보안 점검] 주소창 뒤에 ?admin=true 가 붙어있으면 이 브라우저를 '주인 브라우저'로 영구 등록합니다.
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('admin') === 'true') {
+            localStorage.setItem('is_site_owner', 'yes');
+            alert("👑 관리자(사이트 주인) 인증이 완료되었습니다! 이제 자유롭게 삭제가 가능합니다.");
+        }
+
         const books = [
             {
                 id: "old-man-sea",
@@ -482,13 +509,12 @@
         let currentActiveBookId = null;
         let currentGenreFilter = 'all';
 
-        // 🧮 특정 도서의 댓글 평균 평점을 계산하는 핵심 함수
         function getAverageRating(book) {
-            const allStorageData = JSON.parse(localStorage.getItem('book_hub_reviews_v3')) || {};
+            const allStorageData = JSON.parse(localStorage.getItem('book_hub_reviews_v5')) || {};
             const bookReviews = allStorageData[book.id] || [];
             
             if (bookReviews.length === 0) {
-                return `⭐️ ${book.defaultRating.toFixed(1)}`; // 리뷰가 없으면 기본 점수 반환
+                return `⭐️ ${book.defaultRating.toFixed(1)}`;
             }
             
             const totalScore = bookReviews.reduce((sum, rev) => sum + parseFloat(rev.score), 0);
@@ -497,7 +523,6 @@
             return `⭐️ ${average.toFixed(1)} (${bookReviews.length}명 참여)`;
         }
 
-        // 메인 리스트 렌더링 함수
         function filterGenre(genre) {
             currentGenreFilter = genre;
             const buttons = document.querySelectorAll('#genreNav button');
@@ -531,7 +556,6 @@
                 card.className = 'book-card';
                 const tagClass = book.category === 'fantasy' ? 'book-tag fantasy-tag' : 'book-tag';
                 
-                // 실시간 댓글 평균 평점 적용
                 const dynamicRating = getAverageRating(book);
 
                 card.innerHTML = `
@@ -551,7 +575,6 @@
             });
         }
 
-        // 모달 열기 함수
         function openModal(book) {
             currentActiveBookId = book.id;
             updateModalHeader(book);
@@ -565,7 +588,6 @@
             document.body.style.overflow = 'hidden';
         }
 
-        // 모달창 내 상단 서평 텍스트 렌더링 (평균 평점 실시간 변화 반영 목적)
         function updateModalHeader(book) {
             const tagClass = book.category === 'fantasy' ? 'book-tag fantasy-tag' : 'book-tag';
             const icon = book.category === 'fantasy' ? '🚀' : '🏛️';
@@ -582,10 +604,9 @@
             `;
         }
 
-        // 한 줄 평 목록 로드 및 뿌려주기
         function loadUserReviews() {
             userReviewsList.innerHTML = '';
-            const allStorageData = JSON.parse(localStorage.getItem('book_hub_reviews_v3')) || {};
+            const allStorageData = JSON.parse(localStorage.getItem('book_hub_reviews_v5')) || {};
             const bookReviews = allStorageData[currentActiveBookId] || [];
             
             if(bookReviews.length === 0) {
@@ -593,12 +614,20 @@
                 return;
             }
 
-            bookReviews.forEach(rev => {
+            // 현재 접속 기기가 관리자인지 판별
+            const isOwner = localStorage.getItem('is_site_owner') === 'yes';
+
+            bookReviews.forEach((rev, index) => {
                 const item = document.createElement('div');
                 item.className = 'user-review-item';
                 
                 let stars = '';
                 for(let i=0; i<parseInt(rev.score); i++) stars += '⭐️';
+
+                // 👑 오직 관리자(나)에게만 ❌ 버튼을 노출하거나 정상 작동 시킵니다.
+                const deleteButtonHtml = isOwner 
+                    ? `<button class="delete-review-btn" onclick="deleteReview(${index})">❌</button>` 
+                    : `<button class="delete-review-btn" onclick="alert('권한이 없습니다. 사이트 관리자만 삭제 가능합니다.')">❌</button>`;
 
                 item.innerHTML = `
                     <div class="user-review-header">
@@ -606,12 +635,36 @@
                         <span>${stars}</span>
                     </div>
                     <div style="color:#57534e; word-break: break-all;">${escapeHtml(rev.comment)}</div>
+                    ${deleteButtonHtml}
                 `;
                 userReviewsList.appendChild(item);
             });
         }
 
-        // 댓글 등록 액션 버튼
+        // 👑 관리자 전용 삭제 핸들러
+        window.deleteReview = function(index) {
+            if (localStorage.getItem('is_site_owner') !== 'yes') {
+                alert("권한이 없습니다.");
+                return;
+            }
+
+            if(!confirm("이 리뷰를 정말 삭제하시겠습니까?")) return;
+
+            const allStorageData = JSON.parse(localStorage.getItem('book_hub_reviews_v5')) || {};
+            const bookReviews = allStorageData[currentActiveBookId] || [];
+            
+            if (!bookReviews[index]) return;
+
+            bookReviews.splice(index, 1);
+            allStorageData[currentActiveBookId] = bookReviews;
+            localStorage.setItem('book_hub_reviews_v5', JSON.stringify(allStorageData));
+            
+            const targetBook = books.find(b => b.id === currentActiveBookId);
+            updateModalHeader(targetBook);
+            loadUserReviews();
+            filterGenre(currentGenreFilter);
+        }
+
         document.getElementById('submitReviewBtn').addEventListener('click', () => {
             const nameInput = document.getElementById('revName').value.trim();
             const scoreInput = document.getElementById('revRating').value;
@@ -620,7 +673,7 @@
             if(!nameInput) { alert('닉네임을 입력해 주세요.'); return; }
             if(!commentInput) { alert('내용을 입력해 주세요.'); return; }
 
-            const allStorageData = JSON.parse(localStorage.getItem('book_hub_reviews_v3')) || {};
+            const allStorageData = JSON.parse(localStorage.getItem('book_hub_reviews_v5')) || {};
             if(!allStorageData[currentActiveBookId]) {
                 allStorageData[currentActiveBookId] = [];
             }
@@ -631,18 +684,14 @@
                 comment: commentInput
             });
 
-            localStorage.setItem('book_hub_reviews_v3', JSON.stringify(allStorageData));
+            localStorage.setItem('book_hub_reviews_v5', JSON.stringify(allStorageData));
             
-            // 1. 입력창 클리어
             document.getElementById('revName').value = '';
             document.getElementById('revComment').value = '';
             
-            // 2. 모달 내 실시간 점수 및 리스트 새로고침
             const targetBook = books.find(b => b.id === currentActiveBookId);
             updateModalHeader(targetBook);
             loadUserReviews();
-            
-            // 3. 모달을 닫았을 때 메인 리스트 카드 평점도 즉시 동기화
             filterGenre(currentGenreFilter);
         });
 
